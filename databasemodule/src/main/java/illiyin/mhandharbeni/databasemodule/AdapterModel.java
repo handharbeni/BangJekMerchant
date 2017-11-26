@@ -2,8 +2,11 @@ package illiyin.mhandharbeni.databasemodule;
 
 import android.content.Context;
 import android.os.StrictMode;
+import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import illiyin.mhandharbeni.databasemodule.generator.ServiceGenerator;
 import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
@@ -25,6 +28,8 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by root on 17/07/17.
@@ -145,15 +150,22 @@ public class AdapterModel implements SessionListener{
         });
     }
     public void doLogin(BodyLogin bodyLogin){
-        Call<ResponseLoginModel> call = interfaceMethod.login(bodyLogin);
-        call.enqueue(new Callback<ResponseLoginModel>() {
+        Call<ArrayList<ResponseLoginModel>> call = interfaceMethod.login(bodyLogin);
+        call.enqueue(new Callback<ArrayList<ResponseLoginModel>>() {
             @Override
-            public void onResponse(Call<ResponseLoginModel> call, Response<ResponseLoginModel> response) {
-
+            public void onResponse(Call<ArrayList<ResponseLoginModel>> call, Response<ArrayList<ResponseLoginModel>> response) {
+                if (response.body() != null){
+                    Log.d(TAG, "onResponse: "+response.body().size());
+                    for (int i = 0;i<response.body().size();i++){
+                        ResponseLoginModel responseLoginModel = response.body().get(i);
+                        Log.d(TAG, "onResponse: "+i);
+                        Log.d(TAG, "onResponse: "+responseLoginModel.getKey());
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<ResponseLoginModel> call, Throwable t) {
+            public void onFailure(Call<ArrayList<ResponseLoginModel>> call, Throwable t) {
 
             }
         });
@@ -179,7 +191,7 @@ public class AdapterModel implements SessionListener{
         call.enqueue(new Callback<ResponseGeneral>() {
             @Override
             public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
-                
+
             }
 
             @Override
@@ -191,29 +203,4 @@ public class AdapterModel implements SessionListener{
     @Override
     public void sessionChange() {
     }
-//    public String add_location_grup(String id_grup, String nama_lokasi, String latitude, String longitude, String prioritas, String type) throws JSONException {
-//        String returns = "Gagal Menambah Lokasi";
-//        RequestBody requestBody = new MultipartBody.Builder()
-//                .setType(MultipartBody.FORM)
-//                .addFormDataPart("key", session.getToken())
-//                .addFormDataPart("id_grup", id_grup)
-//                .addFormDataPart("nama_lokasi", nama_lokasi)
-//                .addFormDataPart("latitude", latitude)
-//                .addFormDataPart("longitude", longitude)
-//                .addFormDataPart("prioritas", prioritas)
-//                .addFormDataPart("type", type)
-//                .build();
-//        String response = null;
-//        try{
-//            response = callHttp.post(endpoint_sentlocationgroup, requestBody);
-//        }catch(IllegalArgumentException e) {
-//
-//        }
-////        String response = callHttp.post(endpoint_sentlocationgroup, requestBody);
-//        JSONObject objectResponse = new JSONObject(response);
-//        if (objectResponse.getInt("code")==300){
-//            returns = "Lokasi Berhasil Ditambahkan";
-//        }
-//        return returns;
-//    }
 }

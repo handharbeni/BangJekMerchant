@@ -1,5 +1,8 @@
 package illiyin.mhandharbeni.databasemodule.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
@@ -43,7 +46,7 @@ public interface InterfaceMethod {
     Call<String> register(@Body BodyRegisterModel registerModel);
 
     @POST("merchant/login")
-    Call<ResponseLoginModel> login(@Body BodyLogin bodyLogin);
+    Call<ArrayList<ResponseLoginModel>> login(@Body BodyLogin bodyLogin);
 
     @POST("merchant/create_menu")
     Call<ResponseGeneral> createMenu(@Body BodyCreateMenu bodyCreateMenu);
