@@ -1,4 +1,4 @@
-package illiyin.mhandharbeni.databasemodule.model.user;
+package illiyin.mhandharbeni.databasemodule.model.user.body;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

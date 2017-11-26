@@ -9,10 +9,19 @@ import illiyin.mhandharbeni.databasemodule.generator.ServiceGenerator;
 import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
-import illiyin.mhandharbeni.databasemodule.model.user.BodyRegisterModel;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyCreateMenu;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyDeleteMenu;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyLogin;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMenu;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
+import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseGeneral;
+import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseLoginModel;
 import illiyin.mhandharbeni.databasemodule.utils.InterfaceMethod;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,7 +91,7 @@ public class AdapterModel implements SessionListener{
         }
     }
 
-    public void do_register(BodyRegisterModel bodyRegisterModel) throws IOException {
+    public void doRegister(BodyRegisterModel bodyRegisterModel) throws IOException {
         Call<String> call = interfaceMethod.register(bodyRegisterModel);
         String response = call.execute().body().toString();
         if (response.equalsIgnoreCase("300")){
@@ -92,8 +101,93 @@ public class AdapterModel implements SessionListener{
         }
     }
 
+    public void createMenu(BodyCreateMenu bodyCreateMenu){
+        Call<ResponseGeneral> call = interfaceMethod.createMenu(bodyCreateMenu);
+        call.enqueue(new Callback<ResponseGeneral>() {
+            @Override
+            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
 
+            }
 
+            @Override
+            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void updateMenu(BodyUpdateMenu bodyUpdateMenu){
+        Call<ResponseGeneral> call = interfaceMethod.updateMenu(bodyUpdateMenu);
+        call.enqueue(new Callback<ResponseGeneral>() {
+            @Override
+            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
+
+            }
+        });
+    }
+    public void deleteMenu(BodyDeleteMenu bodyDeleteMenu){
+        Call<ResponseGeneral> call = interfaceMethod.deleteMenu(bodyDeleteMenu);
+        call.enqueue(new Callback<ResponseGeneral>() {
+            @Override
+            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
+
+            }
+        });
+    }
+    public void doLogin(BodyLogin bodyLogin){
+        Call<ResponseLoginModel> call = interfaceMethod.login(bodyLogin);
+        call.enqueue(new Callback<ResponseLoginModel>() {
+            @Override
+            public void onResponse(Call<ResponseLoginModel> call, Response<ResponseLoginModel> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseLoginModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void uploadImage(MultipartBody.Part userfile, RequestBody key){
+        Call<ResponseGeneral> call = interfaceMethod.uploadImage(userfile, key);
+        call.enqueue(new Callback<ResponseGeneral>() {
+            @Override
+            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
+//                response.body().getStatus();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void updateMerchant(BodyUpdateMerchant bodyUpdateMerchant){
+        Call<ResponseGeneral> call = interfaceMethod.updateMerchant(bodyUpdateMerchant);
+        call.enqueue(new Callback<ResponseGeneral>() {
+            @Override
+            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
+                
+            }
+
+            @Override
+            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
+
+            }
+        });
+    }
     @Override
     public void sessionChange() {
     }
