@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">BangJekMerchant</string>
+    <string name="app_name">Merchant Apps</string>
+    <string name="title_activity_main_class">MainClass</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="placeholder_username">Username</string>
+    <string name="placeholder_password">Password</string>
+    <string name="placeholder_button_login">LOGIN</string>
+    <string name="placeholder_ask">Belum Punya Akun?</string>
+    <string name="placeholder_signhere">Daftar Disini</string>
+    <string name="placeholder_daftar_merchant">Daftar Merchant</string>
+    <string name="placeholder_namausaha">Nama Usaha</string>
+    <string name="placeholder_alamat">Alamat</string>
+    <string name="placeholder_email">Email</string>
+    <string name="placeholder_deskripsi">Deskripsi</string>
+    <string name="placeholder_notelp">No. Telepone</string>
+    <string name="placeholder_jamtutup">Jam Tutup</string>
+    <string name="plceholder_jambuka">Jam Buka</string>
+    <string name="placeholder_button_register">REGISTER</string>
+    <string name="placeholder_menu_dashboard">Dashboard</string>
+    <string name="placeholder_menu_bantuan">Bantuan</string>
+    <string name="placeholder_menu_logout">Logout</string>
 </resources>

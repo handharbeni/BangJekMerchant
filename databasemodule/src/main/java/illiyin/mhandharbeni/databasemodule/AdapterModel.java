@@ -21,8 +21,10 @@ import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseGeneral;
 import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseLoginModel;
 import illiyin.mhandharbeni.databasemodule.utils.InterfaceMethod;
+import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import io.realm.RealmResults;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -65,15 +67,45 @@ public class AdapterModel implements SessionListener{
     }
 
     public void syncCategoryMerchant(){
-        Call<CategoryModel> call = interfaceMethod.getCategoryMerchant();
-        call.enqueue(new Callback<CategoryModel>() {
+        Call<ArrayList<CategoryModel>> call = interfaceMethod.getCategoryMerchant();
+        call.enqueue(new Callback<ArrayList<CategoryModel>>() {
             @Override
-            public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
-
+            public void onResponse(Call<ArrayList<CategoryModel>> call, Response<ArrayList<CategoryModel>> response) {
+                if (response.body().size() > 0){
+                    for (int i=0;i<response.body().size();i++){
+                        CategoryModel cm = response.body().get(i);
+                        CategoryModel newCm = new CategoryModel();
+                        Crud crud = new Crud(context, newCm);
+                        RealmResults results = crud.read("idMerchantCategory", cm.getIdMerchantCategory());
+                        if (results.size() > 0){
+                            /*check sha*/
+                            newCm = (CategoryModel) results.get(0);
+                            assert newCm != null;
+                            if (!cm.getSha().equalsIgnoreCase(newCm.getSha())){
+                                /*update kategori*/
+                                Log.d(TAG, "onResponse: Update Kategori "+cm.getMerchantCategory());
+                                crud.openObject();
+                                newCm.setMerchantCategory(cm.getMerchantCategory());
+                                newCm.setDateAdd(cm.getDateAdd());
+                                newCm.setDeleted(cm.getDeleted());
+                                newCm.setMaxUpload(cm.getMaxUpload());
+                                newCm.setSha(cm.getSha());
+                                newCm.setStatus(cm.getStatus());
+                                crud.update(newCm);
+                                crud.commitObject();
+                            }
+                        }else{
+                            /*insert*/
+                            Log.d(TAG, "onResponse: Insert New Kategori "+cm.getMerchantCategory());
+                            crud.create(cm);
+                        }
+                        crud.closeRealm();
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<CategoryModel> call, Throwable t) {
+            public void onFailure(Call<ArrayList<CategoryModel>> call, Throwable t) {
 
             }
         });

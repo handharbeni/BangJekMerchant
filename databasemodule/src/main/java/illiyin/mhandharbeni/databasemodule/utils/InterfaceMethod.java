@@ -33,7 +33,7 @@ import retrofit2.http.Part;
 public interface InterfaceMethod {
 
     @GET("merchant/listcategory")
-    Call<CategoryModel> getCategoryMerchant();
+    Call<ArrayList<CategoryModel>> getCategoryMerchant();
 
     @GET("merchant/listcategorymenu")
     Call<CategoryMenuModel> getCategoryMenu();
