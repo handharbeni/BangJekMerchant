@@ -23,4 +23,6 @@
     <string name="placeholder_menu_dashboard">Dashboard</string>
     <string name="placeholder_menu_bantuan">Bantuan</string>
     <string name="placeholder_menu_logout">Logout</string>
+    <string name="placeholder_tambah_menu">Tambah Menu</string>
+    <string name="placeholder_simpan">Simpan</string>
 </resources>
