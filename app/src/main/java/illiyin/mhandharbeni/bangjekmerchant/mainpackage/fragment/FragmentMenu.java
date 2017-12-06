@@ -43,8 +43,7 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity().getApplicationContext(), DetailMenu.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getActivity().startActivity(i);
+                getActivity().startActivityForResult(i, 122);
             }
         });
     }

@@ -31,9 +31,13 @@ public class UpdateMenu extends AppCompatActivity {
 
     }
     private void fetch_modules(){
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
     private void fetch_click(){
 
+    }
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

@@ -3,7 +3,7 @@ apply plugin: 'realm-android'
 android {
     signingConfigs {
         config {
-            keyAlias 'keyRelease'
+            keyAlias 'keyrelease'
             keyPassword 'nollimakali'
             storeFile file('/home/mhandharbeni/Documents/AndroidProject/BangJekMerchant/keystore.jks')
             storePassword 'nollimakali'

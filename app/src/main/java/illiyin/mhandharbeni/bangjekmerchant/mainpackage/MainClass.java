@@ -1,5 +1,6 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -143,5 +144,16 @@ public class MainClass extends AppCompatActivity
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 122){
+            TabLayout.Tab tab = tabLayout.getTabAt(1);
+            tab.select();
+        }else if (requestCode == 123){
+            TabLayout.Tab tab = tabLayout.getTabAt(0);
+            tab.select();
+        }
     }
 }
