@@ -3,15 +3,13 @@ package illiyin.mhandharbeni.databasemodule;
 import android.content.Context;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.Menu;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import illiyin.mhandharbeni.databasemodule.generator.ServiceGenerator;
-import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
+import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyCreateMenu;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyDeleteMenu;
@@ -19,7 +17,6 @@ import illiyin.mhandharbeni.databasemodule.model.user.body.BodyLogin;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMenu;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
-import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseGeneral;
 import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseLoginModel;
 import illiyin.mhandharbeni.databasemodule.utils.InterfaceMethod;
 import illiyin.mhandharbeni.realmlibrary.Crud;
@@ -237,7 +234,7 @@ public class AdapterModel implements SessionListener{
         }
         return returns;
     }
-    public void doLogin(BodyLogin bodyLogin, String captionSuccess, String captionFailed){
+    public void doLogin(BodyLogin bodyLogin){
         Call<ArrayList<ResponseLoginModel>> call = interfaceMethod.login(bodyLogin);
         call.enqueue(new Callback<ArrayList<ResponseLoginModel>>() {
             @Override
@@ -248,6 +245,25 @@ public class AdapterModel implements SessionListener{
                         ResponseLoginModel responseLoginModel = response.body().get(i);
                         Log.d(TAG, "onResponse: "+i);
                         Log.d(TAG, "onResponse: "+responseLoginModel.getKey());
+                        /*
+                        * nama
+                        * alamat
+                        * notelp
+                        * email
+                        * token
+                        * status
+                        * image
+                        * */
+
+                        String nama = responseLoginModel.getName();
+                        String alamat = responseLoginModel.getAddress();
+                        String notelp = responseLoginModel.getPhone();
+                        String email = responseLoginModel.getEmail();
+                        String token = responseLoginModel.getKey();
+                        String status = responseLoginModel.getStatus();
+                        String image = responseLoginModel.getPhone();
+
+                        session.setSession(nama, alamat, notelp, email, token, status, image);
                     }
                 }
             }

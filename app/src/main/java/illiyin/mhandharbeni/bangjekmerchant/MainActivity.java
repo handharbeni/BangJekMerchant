@@ -23,6 +23,6 @@ public class MainActivity extends AppCompatActivity {
         bodyLogin.setPassword("12345");
 
         AdapterModel adapterModel = new AdapterModel(this);
-        adapterModel.doLogin(bodyLogin);
+//        adapterModel.doLogin(bodyLogin);
     }
 }

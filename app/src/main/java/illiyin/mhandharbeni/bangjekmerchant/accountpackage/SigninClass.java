@@ -3,23 +3,31 @@ package illiyin.mhandharbeni.bangjekmerchant.accountpackage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.MainClass;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyLogin;
+import illiyin.mhandharbeni.sessionlibrary.Session;
+import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import illiyin.mhandharbeni.utilslibrary.SnackBar;
 
 /**
  * Created by root on 11/27/17.
  */
 
-public class SigninClass extends AppCompatActivity {
+public class SigninClass extends AppCompatActivity implements SessionListener {
     private AdapterModel adapterModel;
-
+    private Session session;
     private TextView klikDaftar;
     private Button btnLogin;
+
+    private EditText txtUsername, txtPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +45,11 @@ public class SigninClass extends AppCompatActivity {
 
     private void fetch_modules(){
         adapterModel = new AdapterModel(this);
+        session = new Session(this, this);
     }
     private void fetch_components(){
+        txtUsername = (EditText) findViewById(R.id.txtUsername);
+        txtPassword = (EditText) findViewById(R.id.txtPassword);
         klikDaftar = (TextView) findViewById(R.id.klikDaftar);
         btnLogin = (Button) findViewById(R.id.btnLogin);
     }
@@ -53,9 +64,24 @@ public class SigninClass extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(SigninClass.this, MainClass.class);
-                startActivity(i);
+                BodyLogin bl = new BodyLogin();
+                bl.setEmail(txtUsername.getText().toString());
+                bl.setPassword(txtPassword.getText().toString());
+                adapterModel.doLogin(bl);
             }
         });
+    }
+
+    @Override
+    public void sessionChange() {
+        if (!session.getToken().equalsIgnoreCase("nothing")){
+            Intent i = new Intent(SigninClass.this, MainClass.class);
+            startActivity(i);
+        }else{
+            showSnackBar("Login Gagal");
+        }
+    }
+    private void showSnackBar(String message){
+        new SnackBar(this).message(message).build(Gravity.BOTTOM).show();
     }
 }
