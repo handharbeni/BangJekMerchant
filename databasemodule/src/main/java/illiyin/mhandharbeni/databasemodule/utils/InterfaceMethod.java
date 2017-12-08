@@ -36,11 +36,11 @@ public interface InterfaceMethod {
     Call<ArrayList<CategoryModel>> getCategoryMerchant();
 
     @GET("merchant/listcategorymenu")
-    Call<CategoryMenuModel> getCategoryMenu();
+    Call<ArrayList<CategoryMenuModel>> getCategoryMenu();
 
     @FormUrlEncoded
     @POST("merchant/read_menu")
-    Call<MenuMerchantModel> getMenu(@Field("key") String key);
+    Call<ArrayList<MenuMerchantModel>> getMenu(@Field("key") String key);
 
     @POST("merchant/register")
     Call<String> register(@Body BodyRegisterModel registerModel);
@@ -49,18 +49,18 @@ public interface InterfaceMethod {
     Call<ArrayList<ResponseLoginModel>> login(@Body BodyLogin bodyLogin);
 
     @POST("merchant/create_menu")
-    Call<ResponseGeneral> createMenu(@Body BodyCreateMenu bodyCreateMenu);
+    Call<String> createMenu(@Body BodyCreateMenu bodyCreateMenu);
 
     @POST("merchant/update_menu")
-    Call<ResponseGeneral> updateMenu(@Body BodyUpdateMenu bodyUpdateMenu);
+    Call<String> updateMenu(@Body BodyUpdateMenu bodyUpdateMenu);
 
     @POST("merchant/delete_menu")
-    Call<ResponseGeneral> deleteMenu(@Body BodyDeleteMenu bodyDeleteMenu);
+    Call<String> deleteMenu(@Body BodyDeleteMenu bodyDeleteMenu);
 
     @Multipart
     @POST("merchant/upload")
-    Call<ResponseGeneral> uploadImage(@Part("userfile") MultipartBody.Part userfile, @Part("name") RequestBody key);
+    Call<String> uploadImage(@Part("userfile") MultipartBody.Part userfile, @Part("name") RequestBody key);
 
     @POST("merchant/update_merchant")
-    Call<ResponseGeneral> updateMerchant(@Body BodyUpdateMerchant bodyUpdateMerchant);
+    Call<String> updateMerchant(@Body BodyUpdateMerchant bodyUpdateMerchant);
 }

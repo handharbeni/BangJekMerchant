@@ -13,6 +13,7 @@ import illiyin.mhandharbeni.bangjekmerchant.R;
  */
 
 public class FragmentProfile extends Fragment {
+    public static Integer requestCode = 122;
     View v;
 
     @Override

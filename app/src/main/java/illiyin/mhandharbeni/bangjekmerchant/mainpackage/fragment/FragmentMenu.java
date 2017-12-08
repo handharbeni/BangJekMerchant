@@ -8,14 +8,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.adapter.AdapterMenu;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
+import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
+import illiyin.mhandharbeni.realmlibrary.Crud;
+import io.realm.RealmResults;
 
 /**
  * Created by root on 12/5/17.
  */
 
 public class FragmentMenu extends Fragment {
+    private MenuMerchantModel menuMerchantModel;
+    private Crud crud;
+    private AdapterMenu adapterMenu;
+    private RealmRecyclerView rvMenu;
+
+    public static Integer requestCode = 123;
     View v;
     private Button btnAddMenu;
     @Override
@@ -30,21 +41,29 @@ public class FragmentMenu extends Fragment {
         fetch_modules();
         fetch_components();
         fetch_click();
+        fetch_adapter();
     }
 
     private void fetch_components(){
         btnAddMenu = v.findViewById(R.id.btnAddMenu);
+        rvMenu = v.findViewById(R.id.rvMenu);
     }
     private void fetch_modules(){
-
+        menuMerchantModel = new MenuMerchantModel();
+        crud = new Crud(getActivity().getApplicationContext(), menuMerchantModel);
     }
     private void fetch_click(){
         btnAddMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity().getApplicationContext(), DetailMenu.class);
-                getActivity().startActivityForResult(i, 122);
+                getActivity().startActivityForResult(i, requestCode);
             }
         });
+    }
+    private void fetch_adapter(){
+        RealmResults resultMenu = crud.read();
+        adapterMenu = new AdapterMenu(getActivity().getApplicationContext(), resultMenu, true);
+        rvMenu.setAdapter(adapterMenu);
     }
 }

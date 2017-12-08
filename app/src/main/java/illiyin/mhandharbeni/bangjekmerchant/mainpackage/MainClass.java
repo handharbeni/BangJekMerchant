@@ -2,11 +2,13 @@ package illiyin.mhandharbeni.bangjekmerchant.mainpackage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +24,8 @@ import com.h6ah4i.android.tablayouthelper.TabLayoutHelper;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.adapter.TabsPagerAdapter;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentMenu;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.sessionlibrary.Session;
@@ -29,6 +33,7 @@ import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 
 public class MainClass extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
+    private static final String TAG = "MainClass";
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private TabLayoutHelper mTabLayoutHelper;
@@ -148,12 +153,18 @@ public class MainClass extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 122){
-            TabLayout.Tab tab = tabLayout.getTabAt(1);
-            tab.select();
-        }else if (requestCode == 123){
-            TabLayout.Tab tab = tabLayout.getTabAt(0);
-            tab.select();
+        if (requestCode == FragmentMenu.requestCode){
+            changeTab(1);
+        }else if (requestCode == FragmentProfile.requestCode){
+            changeTab(0);
         }
+    }
+    private void changeTab(final int position){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tabLayout.getTabAt(position).select();
+            }
+        }, 100);
     }
 }

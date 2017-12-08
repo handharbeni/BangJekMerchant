@@ -3,6 +3,7 @@ package illiyin.mhandharbeni.databasemodule;
 import android.content.Context;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.Menu;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,15 +53,39 @@ public class AdapterModel implements SessionListener{
         session = new Session(context, this);
     }
     public void syncCategoryMenu(){
-        Call<CategoryMenuModel> call = interfaceMethod.getCategoryMenu();
-        call.enqueue(new Callback<CategoryMenuModel>() {
+        Call<ArrayList<CategoryMenuModel>> call = interfaceMethod.getCategoryMenu();
+        call.enqueue(new Callback<ArrayList<CategoryMenuModel>>() {
             @Override
-            public void onResponse(Call<CategoryMenuModel> call, Response<CategoryMenuModel> response) {
-
+            public void onResponse(Call<ArrayList<CategoryMenuModel>> call, Response<ArrayList<CategoryMenuModel>> response) {
+                if (response.body().size() > 0){
+                    for (int i=0;i<response.body().size();i++){
+                        CategoryMenuModel kategoriServer = response.body().get(i);
+                        CategoryMenuModel kategoriLokal = new CategoryMenuModel();
+                        Crud crudLokal = new Crud(context, kategoriLokal);
+                        RealmResults resultLokal = crudLokal.read("id_merchant_menu_category", kategoriServer.getIdMerchantMenuCategory());
+                        if (resultLokal.size() > 0){
+                            CategoryMenuModel updateCategory = (CategoryMenuModel) resultLokal.get(0);
+                            assert updateCategory != null;
+                            if (!updateCategory.getSha().equalsIgnoreCase(kategoriServer.getSha())){
+                                crudLokal.openObject();
+                                updateCategory.setMerchantMenuCategory(kategoriServer.getMerchantMenuCategory());
+                                updateCategory.setStatus(kategoriServer.getStatus());
+                                updateCategory.setDeleted(kategoriServer.getDeleted());
+                                updateCategory.setSha(kategoriServer.getSha());
+                                crudLokal.update(updateCategory);
+                                crudLokal.commitObject();
+                            }
+                            /*update with check sha*/
+                        }else{
+                            crudLokal.create(kategoriServer);
+                        }
+                        crudLokal.closeRealm();
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<CategoryMenuModel> call, Throwable t) {
+            public void onFailure(Call<ArrayList<CategoryMenuModel>> call, Throwable t) {
 
             }
         });
@@ -83,7 +108,6 @@ public class AdapterModel implements SessionListener{
                             assert newCm != null;
                             if (!cm.getSha().equalsIgnoreCase(newCm.getSha())){
                                 /*update kategori*/
-                                Log.d(TAG, "onResponse: Update Kategori "+cm.getMerchantCategory());
                                 crud.openObject();
                                 newCm.setMerchantCategory(cm.getMerchantCategory());
                                 newCm.setDateAdd(cm.getDateAdd());
@@ -96,7 +120,6 @@ public class AdapterModel implements SessionListener{
                             }
                         }else{
                             /*insert*/
-                            Log.d(TAG, "onResponse: Insert New Kategori "+cm.getMerchantCategory());
                             crud.create(cm);
                         }
                         crud.closeRealm();
@@ -113,75 +136,108 @@ public class AdapterModel implements SessionListener{
 
     public void syncMenu(){
         if (session.getToken().equalsIgnoreCase("nothing")){
-            Call<MenuMerchantModel> call = interfaceMethod.getMenu(session.getToken());
-            call.enqueue(new Callback<MenuMerchantModel>() {
+            Call<ArrayList<MenuMerchantModel>> call = interfaceMethod.getMenu(session.getToken());
+            call.enqueue(new Callback<ArrayList<MenuMerchantModel>>() {
                 @Override
-                public void onResponse(Call<MenuMerchantModel> call, Response<MenuMerchantModel> response) {
-
+                public void onResponse(Call<ArrayList<MenuMerchantModel>> call, Response<ArrayList<MenuMerchantModel>> response) {
+                    if (response.body().size() > 0){
+                        for (int i=0;i<response.body().size();i++){
+                            MenuMerchantModel menuServer = response.body().get(i);
+                            MenuMerchantModel menuLokal = new MenuMerchantModel();
+                            Crud crudLokal = new Crud(context, menuLokal);
+                            RealmResults resultsLokal = crudLokal.read("id_merchant_menu", menuServer.getIdMerchantMenu());
+                            if (resultsLokal.size() > 0){
+                                /*check sha then update*/
+                                MenuMerchantModel updateMerchant = (MenuMerchantModel) resultsLokal.get(0);
+                                assert updateMerchant != null;
+                                if (!updateMerchant.getSha().equalsIgnoreCase(menuServer.getSha())){
+                                    crudLokal.openObject();
+                                    updateMerchant.setIdMerchant(menuServer.getIdMerchant());
+                                    updateMerchant.setMerchantMenu(menuServer.getMerchantMenu());
+                                    updateMerchant.setIdMerchantMenuCategory(menuServer.getIdMerchantMenuCategory());
+                                    updateMerchant.setPhoto(menuServer.getPhoto());
+                                    updateMerchant.setPrice(menuServer.getPrice());
+                                    updateMerchant.setDiscount(menuServer.getDiscount());
+                                    updateMerchant.setDiscountVariant(menuServer.getDiscountVariant());
+                                    updateMerchant.setDescription(menuServer.getDescription());
+                                    updateMerchant.setStatus(menuServer.getStatus());
+                                    updateMerchant.setDeleted(menuServer.getDeleted());
+                                    updateMerchant.setSha(menuServer.getSha());
+                                    crudLokal.update(updateMerchant);
+                                    crudLokal.commitObject();
+                                }
+                            }else{
+                                /*insert new*/
+                                crudLokal.create(menuServer);
+                            }
+                            crudLokal.closeRealm();
+                        }
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<MenuMerchantModel> call, Throwable t) {
+                public void onFailure(Call<ArrayList<MenuMerchantModel>> call, Throwable t) {
 
                 }
             });
         }
     }
 
-    public void doRegister(BodyRegisterModel bodyRegisterModel) throws IOException {
+    public String doRegister(BodyRegisterModel bodyRegisterModel, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
         Call<String> call = interfaceMethod.register(bodyRegisterModel);
         String response = call.execute().body().toString();
         if (response.equalsIgnoreCase("300")){
             /*registrasi berhasil*/
+            returns = captionSuccess;
         }else{
             /*registrasi gagal*/
+            returns = captionFailed;
         }
+        return returns;
     }
 
-    public void createMenu(BodyCreateMenu bodyCreateMenu){
-        Call<ResponseGeneral> call = interfaceMethod.createMenu(bodyCreateMenu);
-        call.enqueue(new Callback<ResponseGeneral>() {
-            @Override
-            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
-
-            }
-        });
+    public String createMenu(BodyCreateMenu bodyCreateMenu, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
+        Call<String> call = interfaceMethod.createMenu(bodyCreateMenu);
+        String response = call.execute().body().toString();
+        if (response.equalsIgnoreCase("300")){
+            /*registrasi berhasil*/
+            returns = captionSuccess;
+        }else{
+            /*registrasi gagal*/
+            returns = captionFailed;
+        }
+        return returns;
     }
 
-    public void updateMenu(BodyUpdateMenu bodyUpdateMenu){
-        Call<ResponseGeneral> call = interfaceMethod.updateMenu(bodyUpdateMenu);
-        call.enqueue(new Callback<ResponseGeneral>() {
-            @Override
-            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
-
-            }
-        });
+    public String updateMenu(BodyUpdateMenu bodyUpdateMenu, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
+        Call<String> call = interfaceMethod.updateMenu(bodyUpdateMenu);
+        String response = call.execute().body().toString();
+        if (response.equalsIgnoreCase("300")){
+            /*update berhasil*/
+            returns = captionSuccess;
+        }else{
+            /*update gagal*/
+            returns = captionFailed;
+        }
+        return returns;
     }
-    public void deleteMenu(BodyDeleteMenu bodyDeleteMenu){
-        Call<ResponseGeneral> call = interfaceMethod.deleteMenu(bodyDeleteMenu);
-        call.enqueue(new Callback<ResponseGeneral>() {
-            @Override
-            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
-
-            }
-        });
+    public String deleteMenu(BodyDeleteMenu bodyDeleteMenu, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
+        Call<String> call = interfaceMethod.deleteMenu(bodyDeleteMenu);
+        String response = call.execute().body().toString();
+        if (response.equalsIgnoreCase("300")){
+            /*delete berhasil*/
+            returns = captionSuccess;
+        }else{
+            /*delete gagal*/
+            returns = captionFailed;
+        }
+        return returns;
     }
-    public void doLogin(BodyLogin bodyLogin){
+    public void doLogin(BodyLogin bodyLogin, String captionSuccess, String captionFailed){
         Call<ArrayList<ResponseLoginModel>> call = interfaceMethod.login(bodyLogin);
         call.enqueue(new Callback<ArrayList<ResponseLoginModel>>() {
             @Override
@@ -203,34 +259,32 @@ public class AdapterModel implements SessionListener{
         });
     }
 
-    public void uploadImage(MultipartBody.Part userfile, RequestBody key){
-        Call<ResponseGeneral> call = interfaceMethod.uploadImage(userfile, key);
-        call.enqueue(new Callback<ResponseGeneral>() {
-            @Override
-            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
-//                response.body().getStatus();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
-
-            }
-        });
+    public String uploadImage(MultipartBody.Part userfile, RequestBody key, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
+        Call<String> call = interfaceMethod.uploadImage(userfile, key);
+        String response = call.execute().body().toString();
+        if (response.equalsIgnoreCase("300")){
+            /*upload berhasil*/
+            returns = captionSuccess;
+        }else{
+            /*upload gagal*/
+            returns = captionFailed;
+        }
+        return returns;
     }
 
-    public void updateMerchant(BodyUpdateMerchant bodyUpdateMerchant){
-        Call<ResponseGeneral> call = interfaceMethod.updateMerchant(bodyUpdateMerchant);
-        call.enqueue(new Callback<ResponseGeneral>() {
-            @Override
-            public void onResponse(Call<ResponseGeneral> call, Response<ResponseGeneral> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseGeneral> call, Throwable t) {
-
-            }
-        });
+    public String updateMerchant(BodyUpdateMerchant bodyUpdateMerchant, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
+        Call<String> call = interfaceMethod.updateMerchant(bodyUpdateMerchant);
+        String response = call.execute().body().toString();
+        if (response.equalsIgnoreCase("300")){
+            /*update berhasil*/
+            returns = captionSuccess;
+        }else{
+            /*update gagal*/
+            returns = captionFailed;
+        }
+        return returns;
     }
     @Override
     public void sessionChange() {

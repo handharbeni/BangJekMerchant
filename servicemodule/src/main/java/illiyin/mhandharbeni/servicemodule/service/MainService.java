@@ -13,6 +13,8 @@ import java.util.TimerTask;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMenuService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMerchantService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.MenuMerchantService;
+import illiyin.mhandharbeni.sessionlibrary.Session;
+import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 
 
 /**
@@ -24,9 +26,16 @@ public class MainService extends Service {
     public static final long NOTIFY_INTERVAL = 2 * 1000;
     private Handler handler = new Handler();
     private Timer timer = null;
+    private Session session;
 
     @Override
     public void onCreate() {
+        session = new Session(getApplicationContext(), new SessionListener() {
+            @Override
+            public void sessionChange() {
+
+            }
+        });
         if (timer != null) {
             timer.cancel();
         }
@@ -66,16 +75,22 @@ public class MainService extends Service {
                 @Override
                 public void run() {
                     if (!checkIsRunning(CategoryMenuService.class)){
-                        Intent is = new Intent(getBaseContext(), CategoryMenuService.class);
-                        startService(is);
+                        if (!session.getToken().equalsIgnoreCase("nothing")){
+                            Intent is = new Intent(getBaseContext(), CategoryMenuService.class);
+                            startService(is);
+                        }
                     }
                     if (!checkIsRunning(CategoryMerchantService.class)){
-                        Intent is = new Intent(getBaseContext(), CategoryMerchantService.class);
-                        startService(is);
+                        if (!session.getToken().equalsIgnoreCase("nothing")){
+                            Intent is = new Intent(getBaseContext(), CategoryMerchantService.class);
+                            startService(is);
+                        }
                     }
                     if (!checkIsRunning(MenuMerchantService.class)){
-                        Intent is = new Intent(getBaseContext(), MenuMerchantService.class);
-                        startService(is);
+                        if (!session.getToken().equalsIgnoreCase("nothing")){
+                            Intent is = new Intent(getBaseContext(), MenuMerchantService.class);
+                            startService(is);
+                        }
                     }
                 }
             });
