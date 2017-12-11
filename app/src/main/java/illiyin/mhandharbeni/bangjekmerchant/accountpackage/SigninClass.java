@@ -3,7 +3,6 @@ package illiyin.mhandharbeni.bangjekmerchant.accountpackage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,7 +66,11 @@ public class SigninClass extends AppCompatActivity implements SessionListener {
                 BodyLogin bl = new BodyLogin();
                 bl.setEmail(txtUsername.getText().toString());
                 bl.setPassword(txtPassword.getText().toString());
-                adapterModel.doLogin(bl);
+                String login = adapterModel.doLogin(bl, getString(R.string.caption_login_success), getString(R.string.caption_login_failed));
+                showSnackBar(login);
+                if (getString(R.string.caption_login_success).equalsIgnoreCase(login)){
+                    sessionChange();
+                }
             }
         });
     }
@@ -75,13 +78,11 @@ public class SigninClass extends AppCompatActivity implements SessionListener {
     @Override
     public void sessionChange() {
         if (!session.getToken().equalsIgnoreCase("nothing")){
-            Intent i = new Intent(SigninClass.this, MainClass.class);
-            startActivity(i);
-        }else{
-            showSnackBar("Login Gagal");
+            startActivity(new Intent(SigninClass.this, MainClass.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            finish();
         }
     }
     private void showSnackBar(String message){
-        new SnackBar(this).message(message).build(Gravity.BOTTOM).show();
+        new SnackBar(this).view(findViewById(R.id.bottomlinear)).message(message).build().show();
     }
 }

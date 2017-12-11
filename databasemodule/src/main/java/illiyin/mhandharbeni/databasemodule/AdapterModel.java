@@ -2,7 +2,6 @@ package illiyin.mhandharbeni.databasemodule;
 
 import android.content.Context;
 import android.os.StrictMode;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by root on 17/07/17.
  */
@@ -41,13 +38,16 @@ public class AdapterModel implements SessionListener{
     private Session session;
 
     public AdapterModel(Context context) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
+        requestPermission();
+        ServiceGenerator.changeApiBAseUrl("http://192.168.3.7/bangjekApi/");
         interfaceMethod = ServiceGenerator.createService(InterfaceMethod.class);
 
         this.context = context;
         session = new Session(context, this);
+    }
+    public void requestPermission(){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
     public void syncCategoryMenu(){
         Call<ArrayList<CategoryMenuModel>> call = interfaceMethod.getCategoryMenu();
@@ -59,7 +59,7 @@ public class AdapterModel implements SessionListener{
                         CategoryMenuModel kategoriServer = response.body().get(i);
                         CategoryMenuModel kategoriLokal = new CategoryMenuModel();
                         Crud crudLokal = new Crud(context, kategoriLokal);
-                        RealmResults resultLokal = crudLokal.read("id_merchant_menu_category", kategoriServer.getIdMerchantMenuCategory());
+                        RealmResults resultLokal = crudLokal.read("idMerchantMenuCategory", kategoriServer.getIdMerchantMenuCategory());
                         if (resultLokal.size() > 0){
                             CategoryMenuModel updateCategory = (CategoryMenuModel) resultLokal.get(0);
                             assert updateCategory != null;
@@ -131,6 +131,44 @@ public class AdapterModel implements SessionListener{
         });
     }
 
+    public void syncInfo(){
+        if (!session.getToken().equalsIgnoreCase("nothing")){
+            Call<ArrayList<ResponseLoginModel>> call = interfaceMethod.fetch_info(session.getToken());
+            call.enqueue(new Callback<ArrayList<ResponseLoginModel>>() {
+                @Override
+                public void onResponse(Call<ArrayList<ResponseLoginModel>> call, Response<ArrayList<ResponseLoginModel>> response) {
+                    if (response.body()!=null){
+                        for (int i = 0;i<response.body().size();i++) {
+                            ResponseLoginModel responseLoginModel = response.body().get(i);
+                            String sha = responseLoginModel.getSha();
+                            if (!session.getCustomParams(Session.SHA, "nothing").equalsIgnoreCase(sha)){
+                                String nama = responseLoginModel.getName();
+                                String alamat = responseLoginModel.getAddress();
+                                String notelp = responseLoginModel.getPhone();
+                                String email = responseLoginModel.getEmail();
+                                String token = responseLoginModel.getKey();
+                                String status = responseLoginModel.getStatus();
+                                String image = responseLoginModel.getPhone();
+
+                                session.setCustomParams(Session.SHA, sha);
+
+                                session.setSession(nama, alamat, notelp, email, token, status, image);
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<ResponseLoginModel>> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
     public void syncMenu(){
         if (session.getToken().equalsIgnoreCase("nothing")){
             Call<ArrayList<MenuMerchantModel>> call = interfaceMethod.getMenu(session.getToken());
@@ -183,7 +221,8 @@ public class AdapterModel implements SessionListener{
     public String doRegister(BodyRegisterModel bodyRegisterModel, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.register(bodyRegisterModel);
-        String response = call.execute().body().toString();
+        String response = call.execute().body();
+        assert response != null;
         if (response.equalsIgnoreCase("300")){
             /*registrasi berhasil*/
             returns = captionSuccess;
@@ -197,7 +236,8 @@ public class AdapterModel implements SessionListener{
     public String createMenu(BodyCreateMenu bodyCreateMenu, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.createMenu(bodyCreateMenu);
-        String response = call.execute().body().toString();
+        String response = call.execute().body();
+        assert response != null;
         if (response.equalsIgnoreCase("300")){
             /*registrasi berhasil*/
             returns = captionSuccess;
@@ -211,7 +251,8 @@ public class AdapterModel implements SessionListener{
     public String updateMenu(BodyUpdateMenu bodyUpdateMenu, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.updateMenu(bodyUpdateMenu);
-        String response = call.execute().body().toString();
+        String response = call.execute().body();
+        assert response != null;
         if (response.equalsIgnoreCase("300")){
             /*update berhasil*/
             returns = captionSuccess;
@@ -224,7 +265,8 @@ public class AdapterModel implements SessionListener{
     public String deleteMenu(BodyDeleteMenu bodyDeleteMenu, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.deleteMenu(bodyDeleteMenu);
-        String response = call.execute().body().toString();
+        String response = call.execute().body();
+        assert response != null;
         if (response.equalsIgnoreCase("300")){
             /*delete berhasil*/
             returns = captionSuccess;
@@ -234,17 +276,15 @@ public class AdapterModel implements SessionListener{
         }
         return returns;
     }
-    public void doLogin(BodyLogin bodyLogin){
+    public String doLogin(BodyLogin bodyLogin, final String captionSuccess, final String captionFailed){
+        final String[] returns = {captionFailed};
         Call<ArrayList<ResponseLoginModel>> call = interfaceMethod.login(bodyLogin);
         call.enqueue(new Callback<ArrayList<ResponseLoginModel>>() {
             @Override
             public void onResponse(Call<ArrayList<ResponseLoginModel>> call, Response<ArrayList<ResponseLoginModel>> response) {
                 if (response.body() != null){
-                    Log.d(TAG, "onResponse: "+response.body().size());
                     for (int i = 0;i<response.body().size();i++){
                         ResponseLoginModel responseLoginModel = response.body().get(i);
-                        Log.d(TAG, "onResponse: "+i);
-                        Log.d(TAG, "onResponse: "+responseLoginModel.getKey());
                         /*
                         * nama
                         * alamat
@@ -262,23 +302,29 @@ public class AdapterModel implements SessionListener{
                         String token = responseLoginModel.getKey();
                         String status = responseLoginModel.getStatus();
                         String image = responseLoginModel.getPhone();
+                        String sha = responseLoginModel.getSha();
+
+                        session.setCustomParams(Session.SHA, sha);
 
                         session.setSession(nama, alamat, notelp, email, token, status, image);
+                        returns[0] = captionSuccess;
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<ResponseLoginModel>> call, Throwable t) {
-
+                returns[0] = captionFailed;
             }
         });
+        return returns[0];
     }
 
     public String uploadImage(MultipartBody.Part userfile, RequestBody key, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.uploadImage(userfile, key);
-        String response = call.execute().body().toString();
+        String response = call.execute().body();
+        assert response != null;
         if (response.equalsIgnoreCase("300")){
             /*upload berhasil*/
             returns = captionSuccess;
@@ -292,7 +338,8 @@ public class AdapterModel implements SessionListener{
     public String updateMerchant(BodyUpdateMerchant bodyUpdateMerchant, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.updateMerchant(bodyUpdateMerchant);
-        String response = call.execute().body().toString();
+        String response = call.execute().body();
+        assert response != null;
         if (response.equalsIgnoreCase("300")){
             /*update berhasil*/
             returns = captionSuccess;

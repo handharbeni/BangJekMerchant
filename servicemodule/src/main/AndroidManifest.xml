@@ -11,5 +11,6 @@
         <service android:name=".service.intentservice.CategoryMenuService"/>
         <service android:name=".service.intentservice.CategoryMerchantService"/>
         <service android:name=".service.intentservice.MenuMerchantService"/>
+        <service android:name=".service.intentservice.MerchantInformationService"/>
     </application>
 </manifest>

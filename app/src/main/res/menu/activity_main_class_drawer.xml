@@ -6,11 +6,11 @@
     <item android:title="">
         <menu>
             <item
-                android:id="@+id/nav_camera"
+                android:id="@+id/nav_home"
                 android:icon="@drawable/ic_menu_home"
                 android:title="@string/placeholder_menu_dashboard" />
             <item
-                android:id="@+id/nav_gallery"
+                android:id="@+id/nav_help"
                 android:icon="@drawable/ic_menu_help"
                 android:title="@string/placeholder_menu_bantuan" />
         </menu>
@@ -18,7 +18,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_share"
+            android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_logout"
             android:title="@string/placeholder_menu_logout" />
     </group>

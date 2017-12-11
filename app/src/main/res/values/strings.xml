@@ -25,4 +25,7 @@
     <string name="placeholder_menu_logout">Logout</string>
     <string name="placeholder_tambah_menu">Tambah Menu</string>
     <string name="placeholder_simpan">Simpan</string>
+
+    <string name="caption_login_success">Login Sukses</string>
+    <string name="caption_login_failed">Login Gagal</string>
 </resources>

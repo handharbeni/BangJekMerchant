@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 /**
  * Created by root on 9/27/17.
@@ -34,12 +35,12 @@ public class SnackBar {
     private SnackBar position(int position){
         if (position == Gravity.BOTTOM){
             views = this.snackBar.getView();
-            FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+            LinearLayout.LayoutParams params =(LinearLayout.LayoutParams)view.getLayoutParams();
             params.gravity = Gravity.BOTTOM;
             views.setLayoutParams(params);
         }else{
             views = this.snackBar.getView();
-            FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+            LinearLayout.LayoutParams params =(LinearLayout.LayoutParams)view.getLayoutParams();
             params.gravity = Gravity.TOP;
             views.setLayoutParams(params);
         }
@@ -58,7 +59,7 @@ public class SnackBar {
     }
     public SnackBar build(){
         this.snackBar = Snackbar.make(view, message, duration);
-        this.position(Gravity.TOP);
+//        this.position(Gravity.TOP);
         return this;
     }
     public SnackBar build(int position){

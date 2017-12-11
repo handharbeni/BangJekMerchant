@@ -1,11 +1,8 @@
 package illiyin.mhandharbeni.sessionlibrary;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.pddstudio.preferences.encrypted.EncryptedPreferences;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by root on 17/07/17.
@@ -14,14 +11,15 @@ import static android.content.ContentValues.TAG;
 public class Session implements EncryptedPreferences.OnSharedPreferenceChangeListener{
     private SessionListener sessionListener;
     private String defaultKey = "aJ5QElpvadHaiz7mcPNPVQx0P3Xxx0P3Xx";
-    public String NAMA = "NAMA",
+    public static String NAMA = "NAMA",
             ALAMAT = "ALAMAT",
             NOTELP = "NOTELP",
             EMAIL = "EMAIL",
             KEY = "TOKEN",
             STATUS = "STATUS",
             CONNECTION = "CONNECTION",
-            IMAGE = "IMAGE";
+            IMAGE = "IMAGE",
+            SHA = "SHA";
     public String STATELOGIN = "STATELOGIN";/*true belum login, false Sudah Login*/
 
     Context context;

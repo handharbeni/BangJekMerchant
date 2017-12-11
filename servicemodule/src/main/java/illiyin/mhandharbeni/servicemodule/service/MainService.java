@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMenuService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMerchantService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.MenuMerchantService;
+import illiyin.mhandharbeni.servicemodule.service.intentservice.MerchantInformationService;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 
@@ -89,6 +90,12 @@ public class MainService extends Service {
                     if (!checkIsRunning(MenuMerchantService.class)){
                         if (!session.getToken().equalsIgnoreCase("nothing")){
                             Intent is = new Intent(getBaseContext(), MenuMerchantService.class);
+                            startService(is);
+                        }
+                    }
+                    if (!checkIsRunning(MerchantInformationService.class)){
+                        if (!session.getToken().equalsIgnoreCase("nothing")){
+                            Intent is = new Intent(getBaseContext(), MerchantInformationService.class);
                             startService(is);
                         }
                     }

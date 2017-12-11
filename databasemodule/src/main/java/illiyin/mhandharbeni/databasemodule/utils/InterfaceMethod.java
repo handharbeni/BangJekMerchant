@@ -48,6 +48,10 @@ public interface InterfaceMethod {
     @POST("merchant/login")
     Call<ArrayList<ResponseLoginModel>> login(@Body BodyLogin bodyLogin);
 
+    @FormUrlEncoded
+    @POST("merchant/fetch_info")
+    Call<ArrayList<ResponseLoginModel>> fetch_info(@Field("key") String key);
+
     @POST("merchant/create_menu")
     Call<String> createMenu(@Body BodyCreateMenu bodyCreateMenu);
 

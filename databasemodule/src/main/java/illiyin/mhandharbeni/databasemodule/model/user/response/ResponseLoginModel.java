@@ -73,7 +73,7 @@ public class ResponseLoginModel {
     private String key;
     @SerializedName("sha")
     @Expose
-    private Object sha;
+    private String sha;
 
     public String getIdMerchant() {
         return idMerchant;
@@ -243,7 +243,7 @@ public class ResponseLoginModel {
         this.key = key;
     }
 
-    public Object getSha() {
+    public String getSha() {
         return sha;
     }
 }
