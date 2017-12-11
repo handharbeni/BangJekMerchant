@@ -39,7 +39,7 @@ public class AdapterModel implements SessionListener{
 
     public AdapterModel(Context context) {
         requestPermission();
-        ServiceGenerator.changeApiBAseUrl("http://192.168.3.7/bangjekApi/");
+        ServiceGenerator.changeApiBAseUrl("http://45.32.105.117:8151/");
         interfaceMethod = ServiceGenerator.createService(InterfaceMethod.class);
 
         this.context = context;

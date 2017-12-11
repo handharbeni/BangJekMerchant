@@ -1,10 +1,9 @@
 package illiyin.mhandharbeni.databasemodule.utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
+import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyCreateMenu;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyDeleteMenu;
@@ -12,11 +11,9 @@ import illiyin.mhandharbeni.databasemodule.model.user.body.BodyLogin;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMenu;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
-import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseGeneral;
 import illiyin.mhandharbeni.databasemodule.model.user.response.ResponseLoginModel;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
