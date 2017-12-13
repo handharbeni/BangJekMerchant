@@ -1,15 +1,11 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity;
 
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -38,6 +34,7 @@ public class UpdateMenu extends AppCompatActivity {
     private Spinner txtKategori;
     private Button btnSaveMenu;
 
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +45,18 @@ public class UpdateMenu extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        fetch_extras();
         fetch_modules();
         fetch_components();
         fetch_click();
 
         fetch_data_kategori();
+        fetch_data_menu();
+    }
+
+    private void fetch_extras(){
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("idMenu");
     }
 
     private void fetch_components(){
@@ -80,17 +84,24 @@ public class UpdateMenu extends AppCompatActivity {
                 list.add(cmm.getMerchantMenuCategory());
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, list);
 
         txtKategori.setAdapter(adapter);
+    }
+    private void fetch_data_menu(){
+        RealmResults resultMenu = crud.read("id_merchant_menu", id);
+        if (resultMenu.size() > 0){
+            MenuMerchantModel mm = (MenuMerchantModel) resultMenu.get(0);
+            txtNamaMenu.setText(mm.getMerchantMenu());
+            txtHargaMenu.setText(mm.getPrice());
+        }
     }
     private void fetch_click(){
 
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Do your actions here
         onBackPressed();
         return true;
     }

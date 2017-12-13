@@ -2,8 +2,6 @@ package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +13,6 @@ import java.io.IOException;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
-import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
