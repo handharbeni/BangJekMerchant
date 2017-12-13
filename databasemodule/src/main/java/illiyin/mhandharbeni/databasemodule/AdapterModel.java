@@ -64,17 +64,23 @@ public class AdapterModel implements SessionListener{
                             CategoryMenuModel updateCategory = (CategoryMenuModel) resultLokal.get(0);
                             assert updateCategory != null;
                             if (!updateCategory.getSha().equalsIgnoreCase(kategoriServer.getSha())){
-                                crudLokal.openObject();
-                                updateCategory.setMerchantMenuCategory(kategoriServer.getMerchantMenuCategory());
-                                updateCategory.setStatus(kategoriServer.getStatus());
-                                updateCategory.setDeleted(kategoriServer.getDeleted());
-                                updateCategory.setSha(kategoriServer.getSha());
-                                crudLokal.update(updateCategory);
-                                crudLokal.commitObject();
+                                if (kategoriServer.getDeleted().equalsIgnoreCase("Y")){
+                                    crudLokal.delete("idMerchantMenuCategory", kategoriServer.getIdMerchantMenuCategory());
+                                }else{
+                                    crudLokal.openObject();
+                                    updateCategory.setMerchantMenuCategory(kategoriServer.getMerchantMenuCategory());
+                                    updateCategory.setStatus(kategoriServer.getStatus());
+                                    updateCategory.setDeleted(kategoriServer.getDeleted());
+                                    updateCategory.setSha(kategoriServer.getSha());
+                                    crudLokal.update(updateCategory);
+                                    crudLokal.commitObject();
+                                }
                             }
                             /*update with check sha*/
                         }else{
-                            crudLokal.create(kategoriServer);
+                            if (kategoriServer.getDeleted().equalsIgnoreCase("N")){
+                                crudLokal.create(kategoriServer);
+                            }
                         }
                         crudLokal.closeRealm();
                     }
@@ -104,20 +110,26 @@ public class AdapterModel implements SessionListener{
                             newCm = (CategoryModel) results.get(0);
                             assert newCm != null;
                             if (!cm.getSha().equalsIgnoreCase(newCm.getSha())){
-                                /*update kategori*/
-                                crud.openObject();
-                                newCm.setMerchantCategory(cm.getMerchantCategory());
-                                newCm.setDateAdd(cm.getDateAdd());
-                                newCm.setDeleted(cm.getDeleted());
-                                newCm.setMaxUpload(cm.getMaxUpload());
-                                newCm.setSha(cm.getSha());
-                                newCm.setStatus(cm.getStatus());
-                                crud.update(newCm);
-                                crud.commitObject();
+                                if (cm.getDeleted().equalsIgnoreCase("Y")){
+                                    crud.delete("idMerchantCategory", cm.getIdMerchantCategory());
+                                }else{
+                                    /*update kategori*/
+                                    crud.openObject();
+                                    newCm.setMerchantCategory(cm.getMerchantCategory());
+                                    newCm.setDateAdd(cm.getDateAdd());
+                                    newCm.setDeleted(cm.getDeleted());
+                                    newCm.setMaxUpload(cm.getMaxUpload());
+                                    newCm.setSha(cm.getSha());
+                                    newCm.setStatus(cm.getStatus());
+                                    crud.update(newCm);
+                                    crud.commitObject();
+                                }
                             }
                         }else{
-                            /*insert*/
-                            crud.create(cm);
+                            if (cm.getDeleted().equalsIgnoreCase("N")){
+                                /*insert*/
+                                crud.create(cm);
+                            }
                         }
                         crud.closeRealm();
                     }
@@ -140,8 +152,10 @@ public class AdapterModel implements SessionListener{
                     if (response.body()!=null){
                         for (int i = 0;i<response.body().size();i++) {
                             ResponseLoginModel responseLoginModel = response.body().get(i);
+                            assert responseLoginModel != null;
                             String sha = responseLoginModel.getSha();
-                            if (!session.getCustomParams(Session.SHA, "nothing").equalsIgnoreCase(sha)){
+                            assert sha != null;
+                            if (!session.getCustomParams(Session.SSHA, "nothing").equalsIgnoreCase(sha)){
                                 String nama = responseLoginModel.getName();
                                 String alamat = responseLoginModel.getAddress();
                                 String notelp = responseLoginModel.getPhone();
@@ -150,7 +164,7 @@ public class AdapterModel implements SessionListener{
                                 String status = responseLoginModel.getStatus();
                                 String image = responseLoginModel.getPhone();
 
-                                session.setCustomParams(Session.SHA, sha);
+                                session.setCustomParams(Session.SSHA, sha);
 
                                 session.setSession(nama, alamat, notelp, email, token, status, image);
                             }
@@ -170,7 +184,7 @@ public class AdapterModel implements SessionListener{
     }
 
     public void syncMenu(){
-        if (session.getToken().equalsIgnoreCase("nothing")){
+        if (!session.getToken().equalsIgnoreCase("nothing")){
             Call<ArrayList<MenuMerchantModel>> call = interfaceMethod.getMenu(session.getToken());
             call.enqueue(new Callback<ArrayList<MenuMerchantModel>>() {
                 @Override
@@ -180,30 +194,37 @@ public class AdapterModel implements SessionListener{
                             MenuMerchantModel menuServer = response.body().get(i);
                             MenuMerchantModel menuLokal = new MenuMerchantModel();
                             Crud crudLokal = new Crud(context, menuLokal);
-                            RealmResults resultsLokal = crudLokal.read("id_merchant_menu", menuServer.getIdMerchantMenu());
+                            RealmResults resultsLokal = crudLokal.read("idMerchantMenu", menuServer.getIdMerchantMenu());
                             if (resultsLokal.size() > 0){
                                 /*check sha then update*/
                                 MenuMerchantModel updateMerchant = (MenuMerchantModel) resultsLokal.get(0);
                                 assert updateMerchant != null;
                                 if (!updateMerchant.getSha().equalsIgnoreCase(menuServer.getSha())){
-                                    crudLokal.openObject();
-                                    updateMerchant.setIdMerchant(menuServer.getIdMerchant());
-                                    updateMerchant.setMerchantMenu(menuServer.getMerchantMenu());
-                                    updateMerchant.setIdMerchantMenuCategory(menuServer.getIdMerchantMenuCategory());
-                                    updateMerchant.setPhoto(menuServer.getPhoto());
-                                    updateMerchant.setPrice(menuServer.getPrice());
-                                    updateMerchant.setDiscount(menuServer.getDiscount());
-                                    updateMerchant.setDiscountVariant(menuServer.getDiscountVariant());
-                                    updateMerchant.setDescription(menuServer.getDescription());
-                                    updateMerchant.setStatus(menuServer.getStatus());
-                                    updateMerchant.setDeleted(menuServer.getDeleted());
-                                    updateMerchant.setSha(menuServer.getSha());
-                                    crudLokal.update(updateMerchant);
-                                    crudLokal.commitObject();
+                                    if (menuServer.getDeleted().equalsIgnoreCase("Y")){
+                                        /*delete data from realm*/
+                                        crudLokal.delete("idMerchantMenu", menuServer.getIdMerchantMenu());
+                                    }else{
+                                        crudLokal.openObject();
+                                        updateMerchant.setIdMerchant(menuServer.getIdMerchant());
+                                        updateMerchant.setMerchantMenu(menuServer.getMerchantMenu());
+                                        updateMerchant.setIdMerchantMenuCategory(menuServer.getIdMerchantMenuCategory());
+                                        updateMerchant.setPhoto(menuServer.getPhoto());
+                                        updateMerchant.setPrice(menuServer.getPrice());
+                                        updateMerchant.setDiscount(menuServer.getDiscount());
+                                        updateMerchant.setDiscountVariant(menuServer.getDiscountVariant());
+                                        updateMerchant.setDescription(menuServer.getDescription());
+                                        updateMerchant.setStatus(menuServer.getStatus());
+                                        updateMerchant.setDeleted(menuServer.getDeleted());
+                                        updateMerchant.setSha(menuServer.getSha());
+                                        crudLokal.update(updateMerchant);
+                                        crudLokal.commitObject();
+                                    }
                                 }
                             }else{
                                 /*insert new*/
-                                crudLokal.create(menuServer);
+                                if (menuServer.getDeleted().equalsIgnoreCase("N")){
+                                    crudLokal.create(menuServer);
+                                }
                             }
                             crudLokal.closeRealm();
                         }
@@ -304,7 +325,7 @@ public class AdapterModel implements SessionListener{
                         String image = responseLoginModel.getPhone();
                         String sha = responseLoginModel.getSha();
 
-                        session.setCustomParams(Session.SHA, sha);
+                        session.setCustomParams(Session.SSHA, sha);
 
                         session.setSession(nama, alamat, notelp, email, token, status, image);
                         returns[0] = captionSuccess;

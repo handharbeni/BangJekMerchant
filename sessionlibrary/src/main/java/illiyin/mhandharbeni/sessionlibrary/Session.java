@@ -19,7 +19,7 @@ public class Session implements EncryptedPreferences.OnSharedPreferenceChangeLis
             STATUS = "STATUS",
             CONNECTION = "CONNECTION",
             IMAGE = "IMAGE",
-            SHA = "SHA";
+            SSHA = "SHA";
     public String STATELOGIN = "STATELOGIN";/*true belum login, false Sudah Login*/
 
     Context context;

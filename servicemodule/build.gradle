@@ -19,7 +19,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(path: ':databasemodule')
-    compile 'com.github.quentin7b:android-location-tracker:3.2'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':databasemodule')
+    implementation project(path: ':sessionlibrary')
+    implementation 'com.github.quentin7b:android-location-tracker:3.2'
 }

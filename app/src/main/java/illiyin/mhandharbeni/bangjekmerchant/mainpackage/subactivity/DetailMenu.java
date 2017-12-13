@@ -16,7 +16,7 @@ public class DetailMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_form_menu);
+        setContentView(R.layout.layout_detail_menu);
     }
 
     @Override

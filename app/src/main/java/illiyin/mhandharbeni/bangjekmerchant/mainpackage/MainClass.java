@@ -3,21 +3,18 @@ package illiyin.mhandharbeni.bangjekmerchant.mainpackage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +26,6 @@ import illiyin.mhandharbeni.bangjekmerchant.mainpackage.adapter.TabsPagerAdapter
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentMenu;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
-import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
-import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.servicemodule.ServiceAdapter;
@@ -46,8 +41,9 @@ public class MainClass extends AppCompatActivity
 
     private Session session;
     private AdapterModel adapterModel;
+    private NavigationView navigationView;
 
-    private TextView txtNamaMerchant, txtAlamatMerchant, txtDeskripsiMerchant;
+    private TextView txtNamaMerchant, txtAlamatMerchant, txtDeskripsiMerchant, emailMerchant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +58,7 @@ public class MainClass extends AppCompatActivity
         fetch_toolbar();
         init_view();
         fill_information_merchant();
+        fill_information_header();
     }
     public void init_view(){
         viewPager = (ViewPager) findViewById(R.id.pager);
@@ -142,7 +139,7 @@ public class MainClass extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -192,9 +189,16 @@ public class MainClass extends AppCompatActivity
         txtAlamatMerchant.setText(alamat);
         txtDeskripsiMerchant.setText(deskripsi);
     }
+    private void fill_information_header(){
+        View headerView = navigationView.getHeaderView(0);
+        emailMerchant = headerView.findViewById(R.id.emailMerchant);
+        String email = session.getCustomParams(Session.EMAIL, "nothing");
+        emailMerchant.setText(email);
+    }
 
     @Override
     public void sessionChange() {
         fill_information_merchant();
+        fill_information_header();
     }
 }
