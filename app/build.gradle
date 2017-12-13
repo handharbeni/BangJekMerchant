@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'keyrelease'
             keyPassword 'nollimakali'
-            storeFile file('/home/mhandharbeni/Documents/AndroidProject/BangJekMerchant/keystore.jks')
+            storeFile file('/Users/faizalqurni/AndroidProject/BangJekMerchant/keystore.jks')
             storePassword 'nollimakali'
         }
     }
@@ -22,9 +22,28 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
+        }
+    }
+//Here the magic Begins
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+//Here the magic Ends
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi', 'armeabi-v7a', 'mips'
+            universalApk false
         }
     }
 }

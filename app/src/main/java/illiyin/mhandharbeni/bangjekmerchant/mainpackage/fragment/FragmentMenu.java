@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.adapter.AdapterMenu;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.listen.RvClick;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.UpdateMenu;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
 import io.realm.RealmResults;
@@ -20,7 +23,7 @@ import io.realm.RealmResults;
  * Created by root on 12/5/17.
  */
 
-public class FragmentMenu extends Fragment {
+public class FragmentMenu extends Fragment implements RvClick{
     private MenuMerchantModel menuMerchantModel;
     private Crud crud;
     private AdapterMenu adapterMenu;
@@ -63,7 +66,23 @@ public class FragmentMenu extends Fragment {
     }
     private void fetch_adapter(){
         RealmResults resultMenu = crud.read();
-        adapterMenu = new AdapterMenu(getActivity().getApplicationContext(), resultMenu, true);
+        adapterMenu = new AdapterMenu(getActivity().getApplicationContext(), resultMenu, true, this);
         rvMenu.setAdapter(adapterMenu);
+    }
+
+    @Override
+    public void onClick() {
+
+    }
+
+    @Override
+    public void onClick(Integer ID) {
+        Bundle bundle = new Bundle();
+        bundle.putString("idMenu", String.valueOf(ID));
+
+        Intent i = new Intent(getActivity().getApplicationContext(), UpdateMenu.class);
+        i.putExtras(bundle);
+
+        getActivity().startActivityForResult(i, requestCode);
     }
 }

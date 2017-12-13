@@ -22,9 +22,16 @@
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-renamesourcefileattribute SourceFile
 -keepnames public class * extends io.realm.RealmObject
 -keep @io.realm.annotations.RealmModule class *
 -keep class io.realm.** { *; }
 -dontwarn javax.**
 -dontwarn io.realm.**
+-dontwarn com.squareup.okhttp.**
+-dontwarn com.squareup.picasso.**
+-dontwarn illiyin.mhandharbeni.utilslibrary.**
+-dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8

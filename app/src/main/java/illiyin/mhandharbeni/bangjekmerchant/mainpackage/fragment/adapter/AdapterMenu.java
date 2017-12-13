@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.listen.RvClick;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
@@ -21,16 +22,18 @@ import io.realm.RealmViewHolder;
  * Created by root on 12/8/17.
  */
 
-public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel, AdapterMenu.Holder> {
+public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel, AdapterMenu.Holder>{
     private Context context;
     private MenuMerchantModel menuMerchantModel;
     private Crud crud;
+    private RvClick click;
 
-    public AdapterMenu(Context context, RealmResults<MenuMerchantModel> realmResults, boolean automaticUpdate) {
+    public AdapterMenu(Context context, RealmResults<MenuMerchantModel> realmResults, boolean automaticUpdate, RvClick click) {
         super(context, realmResults, automaticUpdate, false);
         this.context = context;
         this.menuMerchantModel = new MenuMerchantModel();
         this.crud = new Crud(this.context, menuMerchantModel);
+        this.click = click;
     }
 
     @Override
@@ -42,12 +45,12 @@ public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel
     public void onBindRealmViewHolder(AdapterMenu.Holder holder, int i) {
         menuMerchantModel = realmResults.get(i);
         holder.txtItemName.setText(menuMerchantModel.getMerchantMenu());
-        holder.txtItemPrice.setText(menuMerchantModel.getPrice());
+        holder.txtItemPrice.setText(menuMerchantModel.getIdMerchantMenu());
+        final String idMerchantMenu = menuMerchantModel.getIdMerchantMenu();
         holder.cardviewparent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                getContext().startActivity(new Intent(getContext(), DetailMenu.class));
+                click.onClick(Integer.valueOf(idMerchantMenu));
             }
         });
     }
