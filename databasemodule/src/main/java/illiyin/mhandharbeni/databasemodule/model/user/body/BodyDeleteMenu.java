@@ -1,11 +1,20 @@
 package illiyin.mhandharbeni.databasemodule.model.user.body;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by root on 11/26/17.
  */
 
 public class BodyDeleteMenu {
-    String id_merchant_menu, key;
+    @SerializedName("id_merchant_menu")
+    @Expose
+    public String id_merchant_menu;
+
+    @SerializedName("key")
+    @Expose
+    public String key;
 
     public BodyDeleteMenu(String id_merchant_menu, String key) {
         this.id_merchant_menu = id_merchant_menu;

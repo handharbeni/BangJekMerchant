@@ -6,6 +6,8 @@ import android.view.MenuItem;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
+import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
+import illiyin.mhandharbeni.realmlibrary.Crud;
 
 /**
  * Created by faizalqurni on 12/6/17.
@@ -13,6 +15,10 @@ import illiyin.mhandharbeni.databasemodule.AdapterModel;
 
 public class DetailMenu extends AppCompatActivity {
     private AdapterModel adapterModel;
+
+    private Crud crudKategoriMenu;
+    private CategoryMenuModel categoryMenuModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,9 @@ public class DetailMenu extends AppCompatActivity {
     }
     private void fetch_modules(){
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        categoryMenuModel = new CategoryMenuModel();
+        crudKategoriMenu = new Crud(this, categoryMenuModel);
     }
 
     @Override

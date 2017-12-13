@@ -1,11 +1,20 @@
 package illiyin.mhandharbeni.databasemodule.model.user.body;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by root on 11/26/17.
  */
 
 public class BodyLogin {
-    String email, password;
+    @SerializedName("email")
+    @Expose
+    public String email;
+
+    @SerializedName("password")
+    @Expose
+    public String password;
 
     public BodyLogin(String email, String password) {
         this.email = email;

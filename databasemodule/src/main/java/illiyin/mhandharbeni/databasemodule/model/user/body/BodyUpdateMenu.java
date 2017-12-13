@@ -1,12 +1,54 @@
 package illiyin.mhandharbeni.databasemodule.model.user.body;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by root on 11/26/17.
  */
 
 public class BodyUpdateMenu {
 
-    String id_merchant_menu, key, merchant_menu, id_merchant_menu_category, photo, price, discount, discount_variant, description, status;
+    @SerializedName("id_merchant_menu")
+    @Expose
+    public String id_merchant_menu;
+
+
+    @SerializedName("key")
+    @Expose
+    public String key;
+
+    @SerializedName("merchant_menu")
+    @Expose
+    public String merchant_menu;
+
+    @SerializedName("id_merchant_menu_category")
+    @Expose
+    public String id_merchant_menu_category;
+
+    @SerializedName("photo")
+    @Expose
+    public String photo;
+
+    @SerializedName("price")
+    @Expose
+    public String price;
+
+    @SerializedName("discount")
+    @Expose
+    public String discount;
+
+    @SerializedName("discount_variant")
+    @Expose
+    public String discount_variant;
+
+    @SerializedName("description")
+    @Expose
+    public String description;
+
+    @SerializedName("status")
+    @Expose
+    public String status;
 
 
     public BodyUpdateMenu() {

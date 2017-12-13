@@ -1,11 +1,24 @@
 package illiyin.mhandharbeni.databasemodule.model.user.body;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by root on 11/26/17.
  */
 
 public class BodyUpdateMerchant {
-    String key, field, value;
+    @SerializedName("key")
+    @Expose
+    public String key;
+
+    @SerializedName("field")
+    @Expose
+    public String field;
+
+    @SerializedName("value")
+    @Expose
+    public String value;
 
     public BodyUpdateMerchant(String key, String field, String value) {
         this.key = key;

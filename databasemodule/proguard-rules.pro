@@ -30,3 +30,29 @@
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn retrofit2.Platform$Java8
+-dontwarn okio.**
+-keep class okio.** { *; }
+
+-dontwarn retrofit2.**
+-dontwarn org.codehaus.mojo.**
+-dontnote retrofit2.Platform
+-dontnote retrofit2.Platform$IOS$MainThreadExecutor
+-dontwarn retrofit2.Platform$Java8
+
+-keep class retrofit2.** { *; }
+
+-keepattributes Exceptions
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes RuntimeVisibleAnnotations
+-keepattributes RuntimeInvisibleAnnotations
+-keepattributes RuntimeVisibleParameterAnnotations
+-keepattributes RuntimeInvisibleParameterAnnotations
+
+-keepattributes EnclosingMethod
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keepclasseswithmembers interface * {
+    @retrofit2.* <methods>;
+}
