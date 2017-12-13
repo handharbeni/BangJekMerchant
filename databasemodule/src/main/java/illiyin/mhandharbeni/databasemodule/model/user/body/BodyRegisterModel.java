@@ -11,10 +11,10 @@ public class BodyRegisterModel {
 
     @SerializedName("name")
     @Expose
-    private String name;
+    public String name;
     @SerializedName("address")
     @Expose
-    private String address;
+    public static String address;
     @SerializedName("email")
     @Expose
     private String email;
@@ -23,16 +23,16 @@ public class BodyRegisterModel {
     private String password;
     @SerializedName("phone")
     @Expose
-    private String phone;
+    public static String phone;
     @SerializedName("photo")
     @Expose
-    private String photo;
+    public static String photo;
     @SerializedName("latitude")
     @Expose
-    private String latitude;
+    public static String latitude;
     @SerializedName("longitude")
     @Expose
-    private String longitude;
+    public static String longitude;
     @SerializedName("id_merchant_category")
     @Expose
     private String idMerchantCategory;
@@ -41,16 +41,16 @@ public class BodyRegisterModel {
     private String maxUpload;
     @SerializedName("open_at")
     @Expose
-    private String openAt;
+    public static String openAt;
     @SerializedName("close_at")
     @Expose
-    private String closeAt;
+    public static String closeAt;
     @SerializedName("point")
     @Expose
     private String point;
     @SerializedName("open_status")
     @Expose
-    private String openStatus;
+    public static String openStatus;
     @SerializedName("status")
     @Expose
     private String status;
@@ -59,10 +59,10 @@ public class BodyRegisterModel {
     private String deleted;
     @SerializedName("imei1")
     @Expose
-    private String imei1;
+    public static String imei1;
     @SerializedName("imei2")
     @Expose
-    private String imei2;
+    public static String imei2;
 
 
     public String getName() {

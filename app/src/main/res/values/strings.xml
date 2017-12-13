@@ -27,5 +27,10 @@
     <string name="placeholder_simpan">Simpan</string>
 
     <string name="caption_login_success">Login Sukses</string>
+    <string name="caption_update_profile_success">Update Profil Sukses</string>
+    <string name="caption_update_menu_success">Update Menu Sukses</string>
     <string name="caption_login_failed">Login Gagal</string>
+    <string name="caption_update_profile_failed">Uodate Profil Gagal</string>
+    <string name="caption_update_menu_failed">Update Menu Gagal</string>
+    <string name="placeholder_simpan_profile">SIMPAN</string>
 </resources>

@@ -1,9 +1,7 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.CardView;
-import android.view.ContextMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,9 +9,9 @@ import android.widget.TextView;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.listen.RvClick;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
+import illiyin.mhandharbeni.utilslibrary.NumberFormat;
 import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
@@ -45,7 +43,7 @@ public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel
     public void onBindRealmViewHolder(AdapterMenu.Holder holder, int i) {
         menuMerchantModel = realmResults.get(i);
         holder.txtItemName.setText(menuMerchantModel.getMerchantMenu());
-        holder.txtItemPrice.setText(menuMerchantModel.getIdMerchantMenu());
+        holder.txtItemPrice.setText(NumberFormat.format(Double.valueOf(menuMerchantModel.getPrice())));
         final String idMerchantMenu = menuMerchantModel.getIdMerchantMenu();
         holder.cardviewparent.setOnClickListener(new View.OnClickListener() {
             @Override

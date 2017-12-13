@@ -25,6 +25,7 @@ import illiyin.mhandharbeni.bangjekmerchant.accountpackage.SigninClass;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.adapter.TabsPagerAdapter;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentMenu;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
@@ -98,7 +99,13 @@ public class MainClass extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Toast.makeText(this, "Add Clicked", Toast.LENGTH_SHORT).show();
+            int indexTabActive = tabLayout.getSelectedTabPosition();
+            int requestCode = FragmentProfile.requestCode;
+            if (indexTabActive == 1){
+                requestCode = FragmentMenu.requestCode;
+            }
+            Intent i = new Intent(getApplicationContext(), DetailMenu.class);
+            startActivityForResult(i, requestCode);
             return true;
         }
 

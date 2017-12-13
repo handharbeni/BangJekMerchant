@@ -2,6 +2,7 @@ package illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
@@ -33,6 +34,14 @@ public class DetailMenu extends AppCompatActivity {
     private void fetch_modules(){
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Do your actions here
+        onBackPressed();
+        return true;
+    }
+
     private void fetch_click(){
 
     }

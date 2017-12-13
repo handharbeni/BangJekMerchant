@@ -12,7 +12,7 @@ public class NumberFormat {
         Double value = d;
         java.text.NumberFormat formatter = java.text.NumberFormat.getCurrencyInstance();
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-        dfs.setCurrencySymbol("Rp.");
+        dfs.setCurrencySymbol("Rp. ");
         ((DecimalFormat) formatter).setDecimalFormatSymbols(dfs);
         return formatter.format(value);
     }
