@@ -55,7 +55,7 @@ public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel
 
     public class Holder extends RealmViewHolder {
         ImageView image;
-        TextView txtItemName, txtItemPrice;
+        TextView txtItemName,txtItemPrice;
         CardView cardviewparent;
         public Holder(View itemView) {
             super(itemView);

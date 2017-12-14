@@ -16,4 +16,5 @@
     <color name="colorBackgroundHeader">#ebebeb</color>
     <color name="colorTabInActive">#c3c3c3</color>
     <color name="colorTabActive">#f09133</color>
+    <color name="transparent">#00000000</color>
 </resources>

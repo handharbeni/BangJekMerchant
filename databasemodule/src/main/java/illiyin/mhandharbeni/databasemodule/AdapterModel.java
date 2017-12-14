@@ -39,7 +39,7 @@ public class AdapterModel implements SessionListener{
 
     public AdapterModel(Context context) {
         requestPermission();
-        ServiceGenerator.changeApiBAseUrl("http://45.32.105.117:8151/");
+        ServiceGenerator.changeApiBAseUrl(context.getString(R.string.module_server));
         interfaceMethod = ServiceGenerator.createService(InterfaceMethod.class);
 
         this.context = context;
@@ -341,7 +341,7 @@ public class AdapterModel implements SessionListener{
         return returns[0];
     }
 
-    public String uploadImage(MultipartBody.Part userfile, RequestBody key, String captionSuccess, String captionFailed) throws IOException {
+    public String uploadImage(MultipartBody.Part userfile, MultipartBody.Part key, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.uploadImage(userfile, key);
         String response = call.execute().body();
