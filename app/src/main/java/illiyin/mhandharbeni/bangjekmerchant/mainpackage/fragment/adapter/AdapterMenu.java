@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.listen.RvClick;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
@@ -44,6 +46,7 @@ public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel
         menuMerchantModel = realmResults.get(i);
         holder.txtItemName.setText(menuMerchantModel.getMerchantMenu());
         holder.txtItemPrice.setText(NumberFormat.format(Double.valueOf(menuMerchantModel.getPrice())));
+        Glide.with(getContext()).load(menuMerchantModel.getPhoto()).into(holder.image);
         final String idMerchantMenu = menuMerchantModel.getIdMerchantMenu();
         holder.cardviewparent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +62,7 @@ public class AdapterMenu extends RealmBasedRecyclerViewAdapter<MenuMerchantModel
         CardView cardviewparent;
         public Holder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.image);
+            image = itemView.findViewById(R.id.images);
             txtItemName = itemView.findViewById(R.id.txtItemName);
             txtItemPrice = itemView.findViewById(R.id.txtItemPrice);
             cardviewparent = itemView.findViewById(R.id.cardviewparent);

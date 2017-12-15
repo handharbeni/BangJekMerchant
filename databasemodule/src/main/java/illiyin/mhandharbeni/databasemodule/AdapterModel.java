@@ -23,7 +23,6 @@ import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 import io.realm.RealmResults;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -162,7 +161,7 @@ public class AdapterModel implements SessionListener{
                                 String email = responseLoginModel.getEmail();
                                 String token = responseLoginModel.getKey();
                                 String status = responseLoginModel.getStatus();
-                                String image = responseLoginModel.getPhone();
+                                String image = responseLoginModel.getPhoto();
 
                                 session.setCustomParams(Session.SSHA, sha);
 
@@ -344,6 +343,20 @@ public class AdapterModel implements SessionListener{
     public String uploadImage(MultipartBody.Part userfile, MultipartBody.Part key, String captionSuccess, String captionFailed) throws IOException {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.uploadImage(userfile, key);
+        String response = call.execute().body();
+        assert response != null;
+        if (response.equalsIgnoreCase("300")){
+            /*upload berhasil*/
+            returns = captionSuccess;
+        }else{
+            /*upload gagal*/
+            returns = captionFailed;
+        }
+        return returns;
+    }
+    public String uploadRegisterImage(MultipartBody.Part userfile, String captionSuccess, String captionFailed) throws IOException {
+        String returns = captionFailed;
+        Call<String> call = interfaceMethod.uploadRegisterImage(userfile);
         String response = call.execute().body();
         assert response != null;
         if (response.equalsIgnoreCase("300")){

@@ -67,7 +67,8 @@ dependencies {
     implementation project(path: ':servicemodule')
     implementation project(path: ':utilslibrary')
     implementation 'com.h6ah4i.android.tablayouthelper:tablayouthelper:0.8.0'
-    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    implementation 'com.github.bumptech.glide:glide:4.4.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
     implementation 'com.github.thorbenprimke:realm-recyclerview:0.9.25'
     implementation 'com.github.ittianyu:BottomNavigationViewEx:1.2.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'

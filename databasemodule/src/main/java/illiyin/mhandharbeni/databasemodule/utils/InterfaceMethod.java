@@ -62,6 +62,10 @@ public interface InterfaceMethod {
     @POST("merchant/upload")
     Call<String> uploadImage(@Part MultipartBody.Part userfile, @Part MultipartBody.Part key);
 
+    @Multipart
+    @POST("merchant/upload_register")
+    Call<String> uploadRegisterImage(@Part MultipartBody.Part userfile);
+
     @POST("merchant/update_merchant")
     Call<String> updateMerchant(@Body BodyUpdateMerchant bodyUpdateMerchant);
 }

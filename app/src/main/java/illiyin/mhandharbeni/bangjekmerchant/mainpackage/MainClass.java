@@ -1,9 +1,14 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -20,8 +25,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.h6ah4i.android.tablayouthelper.TabLayoutHelper;
 
+import java.io.File;
+import java.io.IOException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.accountpackage.SigninClass;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.adapter.TabsPagerAdapter;
@@ -30,14 +41,22 @@ import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
+import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.servicemodule.ServiceAdapter;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import illiyin.mhandharbeni.utilslibrary.SnackBar;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class MainClass extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener, SessionListener {
     private static final String TAG = "MainClass";
+    private static String IMAGE_CURRENT = "ImageCurrent";
+    private String imagePath;
+
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private TabLayoutHelper mTabLayoutHelper;
@@ -47,6 +66,7 @@ public class MainClass extends AppCompatActivity
     private NavigationView navigationView;
 
     private TextView txtNamaMerchant, txtAlamatMerchant, txtDeskripsiMerchant, emailMerchant;
+    private CircleImageView image,imageHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +98,18 @@ public class MainClass extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorTabInActive), getResources().getColor(R.color.colorTabActive));
         tabLayout.addOnTabSelectedListener(this);
+        image = (CircleImageView) findViewById(R.id.images);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent galleryIntent = new Intent();
+                galleryIntent.setType("image/*");
+                galleryIntent.setAction(Intent.ACTION_PICK);
+
+                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pilih Image");
+                startActivityForResult(chooserIntent, 1010);
+            }
+        });
     }
     private PagerAdapter buildAdapter(){
         return new TabsPagerAdapter(getSupportFragmentManager());
@@ -177,7 +209,31 @@ public class MainClass extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FragmentMenu.requestCode){
+        if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
+            //TODO: action
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            Uri selectedImageUri = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
+
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                imagePath = cursor.getString(columnIndex);
+
+                Glide.with(this).load(new File(imagePath))
+                        .into(image);
+                try {
+                    do_upload();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else if (requestCode == FragmentMenu.requestCode){
             changeTab(1);
         }else if (requestCode == FragmentProfile.requestCode){
             changeTab(0);
@@ -195,15 +251,21 @@ public class MainClass extends AppCompatActivity
         String nama = session.getCustomParams(Session.NAMA, "nothing");
         String alamat = session.getCustomParams(Session.ALAMAT, "nothing");
         String deskripsi = session.getCustomParams(Session.EMAIL, "nothing");
+        String photo = session.getCustomParams(Session.IMAGE, "nothing");
         txtNamaMerchant.setText(nama);
         txtAlamatMerchant.setText(alamat);
         txtDeskripsiMerchant.setText(deskripsi);
+        Glide.with(this).load(photo).into(image);
+
     }
     private void fill_information_header(){
         View headerView = navigationView.getHeaderView(0);
         emailMerchant = headerView.findViewById(R.id.emailMerchant);
+        imageHeader = headerView.findViewById(R.id.images);
         String email = session.getCustomParams(Session.EMAIL, "nothing");
+        String photo = session.getCustomParams(Session.IMAGE, "nothing");
         emailMerchant.setText(email);
+        Glide.with(this).load(photo).into(image);
     }
 
     @Override
@@ -229,5 +291,38 @@ public class MainClass extends AppCompatActivity
                 permissions,
                 5
         );
+    }
+    private void do_save(String field, String value){
+        try {
+            BodyUpdateMerchant bodyRegisterModel = new BodyUpdateMerchant();
+            bodyRegisterModel.setField(field);
+            bodyRegisterModel.setKey(session.getToken());
+            bodyRegisterModel.setValue(value);
+            String returns = adapterModel.updateMerchant(bodyRegisterModel, getString(R.string.caption_update_profile_success), getString(R.string.caption_update_profile_failed));
+            if (returns.equalsIgnoreCase(getString(R.string.caption_update_profile_success))){
+                showSnackBar(getString(R.string.caption_update_profile_success));
+            }else{
+                showSnackBar(getString(R.string.caption_update_profile_failed));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void showSnackBar(String message){
+//        new SnackBar(getApplicationContext()).view(this).message(message).build();
+    }
+    private void do_upload() throws IOException {
+        File file = new File(imagePath);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("userfile", file.getName(), requestFile);
+        MultipartBody.Part key = MultipartBody.Part.createFormData("key", session.getToken());
+        String returns = adapterModel.uploadImage(body, key, getString(R.string.caption_upload_success), getString(R.string.caption_upload_failed));
+        if (returns.equalsIgnoreCase(getString(R.string.caption_upload_success))){
+            String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
+//            session.setCustomParams(IMAGE_CURRENT, locationFile);
+            Glide.with(this).load(locationFile).into(image);
+            do_save("photo", locationFile);
+        }
     }
 }

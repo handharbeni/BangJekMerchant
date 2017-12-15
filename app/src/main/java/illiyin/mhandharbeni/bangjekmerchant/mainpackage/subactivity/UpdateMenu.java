@@ -53,6 +53,8 @@ import okhttp3.RequestBody;
 public class UpdateMenu extends AppCompatActivity {
     public static final int PICK_IMAGE = 1;
     private static final String TAG = "UPDATE MENU";
+    private static String FROM_RESULT = "FromResult";
+    private static String IMAGE_CURRENT = "ImageCurrent";
     private AdapterModel adapterModel;
     private Session session;
 
@@ -76,6 +78,7 @@ public class UpdateMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fetch_modules();
         setContentView(R.layout.layout_detail_menu);
     }
 
@@ -83,7 +86,6 @@ public class UpdateMenu extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         fetch_extras();
-        fetch_modules();
         fetch_components();
         fetch_click();
 
@@ -123,6 +125,8 @@ public class UpdateMenu extends AppCompatActivity {
 
         categoryMenuModel = new CategoryMenuModel();
         crudKategoriMenu = new Crud(this, categoryMenuModel);
+
+        session.setCustomParams(FROM_RESULT, "FALSE");
     }
     private void fetch_data_kategori(){
         ArrayList<String> list = new ArrayList();
@@ -135,19 +139,21 @@ public class UpdateMenu extends AppCompatActivity {
         }
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         txtKategori.setAdapter(adapter);
     }
     private void fetch_data_menu(){
         RealmResults resultMenu = crud.read("idMerchantMenu", id);
         if (resultMenu.size() > 0){
             MenuMerchantModel mm = (MenuMerchantModel) resultMenu.get(0);
-            Glide.with(this).load(mm.getPhoto()).into(images);
+            if (session.getCustomParams(FROM_RESULT, "FALSE").equalsIgnoreCase("FALSE")){
+                Glide.with(this).load(mm.getPhoto()).into(images);
+            }
             imageCurrent = mm.getPhoto();
             txtNamaMenu.setText(mm.getMerchantMenu());
             txtHargaMenu.setText(mm.getPrice());
             txtDeskripsiMenu.setText(mm.getDescription());
-            txtKategori.setText(mm.getIdMerchantMenuCategory());
+//            txtKategori.setText(mm.getIdMerchantMenuCategory());
             txtDiscountMenu.setText(mm.getDiscount());
             txtDiscountVariantMenu.setText(mm.getDiscountVariant());
 
@@ -159,14 +165,13 @@ public class UpdateMenu extends AppCompatActivity {
         }
     }
     private void select_kategori(final String label){
-        new Runnable() {
-            @Override
-            public void run() {
-                int position = adapter.getPosition(label);
-                txtKategori.setSelection(position);
-                txtKategori.setText(label);
+        for(int i=0; i < adapter.getCount(); i++) {
+            if(label.trim().equals(adapter.getItem(i))){
+                txtKategori.setText(label.trim());
+                txtKategori.setSelection(i);
+                break;
             }
-        };
+        }
     }
     private void fetch_click(){
         btnSaveMenu.setOnClickListener(new View.OnClickListener() {
@@ -184,15 +189,10 @@ public class UpdateMenu extends AppCompatActivity {
         images.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent();
-//                intent.setType("image/*");
-//                intent.setAction(Intent.ACTION_GET_CONTENT);
-//                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
                 final Intent galleryIntent = new Intent();
                 galleryIntent.setType("image/*");
                 galleryIntent.setAction(Intent.ACTION_PICK);
 
-                // Chooser of file system options.
                 final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pilih Image");
                 startActivityForResult(chooserIntent, 1010);
             }
@@ -249,8 +249,9 @@ public class UpdateMenu extends AppCompatActivity {
         bodyUpdateMenu.setMerchant_menu(txtNamaMenu.getText().toString());
         bodyUpdateMenu.setPrice(txtHargaMenu.getText().toString());
         bodyUpdateMenu.setDescription(txtDeskripsiMenu.getText().toString());
-        bodyUpdateMenu.setId_merchant_menu_category(String.valueOf(adapter.getPosition(txtKategori.getText().toString())));
-        bodyUpdateMenu.setPhoto(session.getCustomParams("ImageCurrent", "https://images.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"));
+
+        bodyUpdateMenu.setId_merchant_menu_category(getIdCategoryMerchant(txtKategori.getText().toString()));
+        bodyUpdateMenu.setPhoto(session.getCustomParams(IMAGE_CURRENT, imageCurrent));
         bodyUpdateMenu.setDiscount(txtDiscountMenu.getText().toString());
         bodyUpdateMenu.setDiscount_variant(txtDiscountVariantMenu.getText().toString());
         bodyUpdateMenu.setStatus("");
@@ -262,6 +263,12 @@ public class UpdateMenu extends AppCompatActivity {
         }else{
             showToast("Menu Gagal Di Ubah");
         }
+    }
+
+    private String getIdCategoryMerchant(String label){
+        RealmResults results = crudKategoriMenu.read("merchantMenuCategory", label);
+        CategoryMenuModel cmm = (CategoryMenuModel) results.get(0);
+        return cmm.getIdMerchantMenuCategory();
     }
 
     private void do_delete() throws IOException {
@@ -294,16 +301,18 @@ public class UpdateMenu extends AppCompatActivity {
             if (cursor != null) {
                 cursor.moveToFirst();
 
+                session.setCustomParams(FROM_RESULT, "TRUE");
+
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
 
                 Glide.with(this).load(new File(imagePath))
                         .into(images);
-//                try {
-//                    do_upload();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    do_upload();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -317,8 +326,8 @@ public class UpdateMenu extends AppCompatActivity {
         if (returns.equalsIgnoreCase(getString(R.string.caption_upload_success))){
             String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
             imageCurrent = locationFile;
-            session.setCustomParams("ImageCurrent", imageCurrent);
-            Glide.with(this).load(imageCurrent).into(images);
+            session.setCustomParams(IMAGE_CURRENT, locationFile);
+            Glide.with(this).load(locationFile).into(images);
         }
     }
 

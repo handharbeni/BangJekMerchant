@@ -1,6 +1,11 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,14 +14,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import java.io.File;
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 import illiyin.mhandharbeni.utilslibrary.SnackBar;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,12 +37,13 @@ import static android.content.ContentValues.TAG;
  */
 
 public class FragmentProfile extends Fragment implements View.OnFocusChangeListener {
+
     public static Integer requestCode = 122;
+
     View v;
-
     private Session session;
-    private AdapterModel adapterModel;
 
+    private AdapterModel adapterModel;
     private TextView txtNamaUsaha, txtAlamat, txtEmail, txtNoTelp, txtDeskripsi, txtJamBuka, txtJamTutup;
     private Button btnRegister;
 
@@ -79,6 +92,7 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
             }
         });
     }
+
     private void fetch_info_merchant(){
         if (!session.getToken().equalsIgnoreCase("nohting")){
             txtNamaUsaha.setText(session.getCustomParams(Session.NAMA, "Not Available"));
@@ -114,21 +128,21 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
         }
 
     }
+
     private void showSnackBar(String message){
         new SnackBar(getActivity().getApplicationContext()).view(v).message(message).build();
     }
-
     @Override
     public void onFocusChange(View view, boolean b) {
         if (!b){
             if (view.getId() == R.id.txtNamaUsaha){
-//                do_save();
+                do_save("name", txtNamaUsaha.getText().toString());
             }else if (view.getId() == R.id.txtAlamat){
-                Log.d(TAG, "onFocusChange: ALAMAT UNFOCUSED");
+                do_save("address", txtAlamat.getText().toString());
             }else if (view.getId() == R.id.txtEmail){
-                Log.d(TAG, "onFocusChange: EMAIL UNFOCUSED");
+                do_save("email", txtEmail.getText().toString());
             }else if (view.getId() == R.id.txtNoTelp){
-                Log.d(TAG, "onFocusChange: NOTELP UNFOCUSED");
+                do_save("phone", txtNoTelp.getText().toString());
             }
         }
     }
