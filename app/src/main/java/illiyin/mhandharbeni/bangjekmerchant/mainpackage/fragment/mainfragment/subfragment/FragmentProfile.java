@@ -1,36 +1,25 @@
-package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment;
+package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import java.io.File;
 import java.io.IOException;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 import illiyin.mhandharbeni.utilslibrary.SnackBar;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-
-import static android.content.ContentValues.TAG;
+import illiyin.mhandharbeni.utilslibrary.TimePicker;
 
 /**
  * Created by root on 12/5/17.
@@ -84,6 +73,7 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
 
         btnRegister = v.findViewById(R.id.btnRegister);
         btnRegister.setText(getString(R.string.placeholder_simpan_profile));
+        btnRegister.setVisibility(View.GONE);
     }
     private void fetch_click(){
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +104,57 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
         txtAlamat.setOnFocusChangeListener(this);
         txtEmail.setOnFocusChangeListener(this);
         txtNoTelp.setOnFocusChangeListener(this);
+        txtJamBuka.setOnFocusChangeListener(this);
+        txtJamTutup.setOnFocusChangeListener(this);
+        txtJamBuka.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog(txtJamBuka);
+            }
+        });
+        txtJamTutup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog(txtJamTutup);
+            }
+        });
+        txtJamBuka.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                do_save("open_at", txtJamBuka.getText().toString());
+
+            }
+        });
+        txtJamTutup.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                do_save("close_at", txtJamTutup.getText().toString());
+            }
+        });
+    }
+    public void showTimePickerDialog(TextView v) {
+        DialogFragment newFragment = new TimePicker(v);
+        newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
     }
     private void do_save(String field, String value){
         try {

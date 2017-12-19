@@ -5,8 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentMenu;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentMenu;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentProfile;
 
 /**
  * Created by root on 12/5/17.

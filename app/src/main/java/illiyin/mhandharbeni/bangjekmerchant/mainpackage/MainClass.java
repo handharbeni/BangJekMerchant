@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +11,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -22,11 +23,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.h6ah4i.android.tablayouthelper.TabLayoutHelper;
 
 import java.io.File;
@@ -36,8 +36,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.accountpackage.SigninClass;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.adapter.TabsPagerAdapter;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentMenu;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.FragmentHelp;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.FragmentHome;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentMenu;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentProfile;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
@@ -46,7 +48,6 @@ import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.servicemodule.ServiceAdapter;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
-import illiyin.mhandharbeni.utilslibrary.SnackBar;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -68,6 +69,7 @@ public class MainClass extends AppCompatActivity
     private TextView txtNamaMerchant, txtAlamatMerchant, txtDeskripsiMerchant, emailMerchant;
     private CircleImageView image,imageHeader;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,19 +87,20 @@ public class MainClass extends AppCompatActivity
         requestPermission();
     }
     public void init_view(){
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+//        viewPager = (ViewPager) findViewById(R.id.pager);
+//        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
 
         txtNamaMerchant = (TextView) findViewById(R.id.txtNamaMerchant);
         txtAlamatMerchant = (TextView) findViewById(R.id.txtAlamatMerchant);
         txtDeskripsiMerchant = (TextView) findViewById(R.id.txtDeskripsiMerchant);
 
-        viewPager.setAdapter(buildAdapter());
-        mTabLayoutHelper = new TabLayoutHelper(tabLayout, viewPager);
-        mTabLayoutHelper.setAutoAdjustTabModeEnabled(true);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabTextColors(getResources().getColor(R.color.colorTabInActive), getResources().getColor(R.color.colorTabActive));
-        tabLayout.addOnTabSelectedListener(this);
+
+//        viewPager.setAdapter(buildAdapter());
+//        mTabLayoutHelper = new TabLayoutHelper(tabLayout, viewPager);
+//        mTabLayoutHelper.setAutoAdjustTabModeEnabled(true);
+//        tabLayout.setupWithViewPager(viewPager);
+//        tabLayout.setTabTextColors(getResources().getColor(R.color.colorTabInActive), getResources().getColor(R.color.colorTabActive));
+//        tabLayout.addOnTabSelectedListener(this);
         image = (CircleImageView) findViewById(R.id.images);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +113,7 @@ public class MainClass extends AppCompatActivity
                 startActivityForResult(chooserIntent, 1010);
             }
         });
+        changeFragment(new FragmentHome());
     }
     private PagerAdapter buildAdapter(){
         return new TabsPagerAdapter(getSupportFragmentManager());
@@ -134,13 +138,13 @@ public class MainClass extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            int indexTabActive = tabLayout.getSelectedTabPosition();
-            int requestCode = FragmentProfile.requestCode;
-            if (indexTabActive == 1){
-                requestCode = FragmentMenu.requestCode;
-            }
-            Intent i = new Intent(getApplicationContext(), DetailMenu.class);
-            startActivityForResult(i, requestCode);
+//            int indexTabActive = tabLayout.getSelectedTabPosition();
+//            int requestCode = FragmentProfile.requestCode;
+//            if (indexTabActive == 1){
+//                requestCode = FragmentMenu.requestCode;
+//            }
+//            Intent i = new Intent(getApplicationContext(), DetailMenu.class);
+//            startActivityForResult(i, requestCode);
             return true;
         }
 
@@ -151,7 +155,9 @@ public class MainClass extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
+            changeFragment(new FragmentHome());
         } else if (id == R.id.nav_help) {
+            changeFragment(new FragmentHelp());
         } else if (id == R.id.nav_logout){
             session.deleteSession();
             delete_all_realm();
@@ -163,6 +169,11 @@ public class MainClass extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void changeFragment(Fragment fragment){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.mainFrameLayout, fragment);
+        ft.commit();
     }
     private void delete_all_realm(){
         MenuMerchantModel mcm = new MenuMerchantModel();
@@ -240,12 +251,12 @@ public class MainClass extends AppCompatActivity
         }
     }
     private void changeTab(final int position){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                tabLayout.getTabAt(position).select();
-            }
-        }, 100);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                tabLayout.getTabAt(position).select();
+//            }
+//        }, 100);
     }
     private void fill_information_merchant(){
         String nama = session.getCustomParams(Session.NAMA, "nothing");
@@ -255,7 +266,7 @@ public class MainClass extends AppCompatActivity
         txtNamaMerchant.setText(nama);
         txtAlamatMerchant.setText(alamat);
         txtDeskripsiMerchant.setText(deskripsi);
-        Glide.with(MainClass.this).load(photo).into(image);
+        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(image);
 
     }
     private void fill_information_header(){
@@ -265,7 +276,7 @@ public class MainClass extends AppCompatActivity
         String email = session.getCustomParams(Session.EMAIL, "nothing");
         String photo = session.getCustomParams(Session.IMAGE, "nothing");
         emailMerchant.setText(email);
-        Glide.with(this).load(photo).into(image);
+        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(imageHeader);
     }
 
     @Override

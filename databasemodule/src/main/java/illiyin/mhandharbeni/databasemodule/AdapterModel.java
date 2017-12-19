@@ -53,54 +53,11 @@ public class AdapterModel implements SessionListener{
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
-//    public void syncCategoryMenu(){
-//        Call<ArrayList<CategoryMenuModel>> call = interfaceMethod.getCategoryMenu();
-//        call.enqueue(new Callback<ArrayList<CategoryMenuModel>>() {
-//            @Override
-//            public void onResponse(Call<ArrayList<CategoryMenuModel>> call, Response<ArrayList<CategoryMenuModel>> response) {
-//                if (response.body().size() > 0){
-//                    for (int i=0;i<response.body().size();i++){
-//                        CategoryMenuModel kategoriServer = response.body().get(i);
-//                        CategoryMenuModel kategoriLokal = new CategoryMenuModel();
-//                        Crud crudLokal = new Crud(context, kategoriLokal);
-//                        RealmResults resultLokal = crudLokal.read("idMerchantMenuCategory", kategoriServer.getIdMerchantMenuCategory());
-//                        if (resultLokal.size() > 0){
-//                            CategoryMenuModel updateCategory = (CategoryMenuModel) resultLokal.get(0);
-//                            assert updateCategory != null;
-//                            if (!updateCategory.getSha().equalsIgnoreCase(kategoriServer.getSha())){
-//                                if (kategoriServer.getDeleted().equalsIgnoreCase("Y")){
-//                                    crudLokal.delete("idMerchantMenuCategory", kategoriServer.getIdMerchantMenuCategory());
-//                                }else{
-//                                    crudLokal.openObject();
-//                                    updateCategory.setMerchantMenuCategory(kategoriServer.getMerchantMenuCategory());
-//                                    updateCategory.setStatus(kategoriServer.getStatus());
-//                                    updateCategory.setDeleted(kategoriServer.getDeleted());
-//                                    updateCategory.setSha(kategoriServer.getSha());
-//                                    crudLokal.update(updateCategory);
-//                                    crudLokal.commitObject();
-//                                }
-//                            }
-//                            /*update with check sha*/
-//                        }else{
-//                            if (kategoriServer.getDeleted().equalsIgnoreCase("N")){
-//                                crudLokal.create(kategoriServer);
-//                            }
-//                        }
-//                        crudLokal.closeRealm();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArrayList<CategoryMenuModel>> call, Throwable t) {
-//
-//            }
-//        });
-//    }
     public void syncCategoryMenuByRx(){
         interfaceMethod.getCategoryMenuByRx()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
+                .unsubscribeOn(Schedulers.io())
                 .subscribe(new Observer<ArrayList<CategoryMenuModel>>() {
                     @Override
                     public void onCompleted() {
@@ -149,58 +106,11 @@ public class AdapterModel implements SessionListener{
                     }
                 });
     }
-//    public void syncCategoryMerchant(){
-//        Call<ArrayList<CategoryModel>> call = interfaceMethod.getCategoryMerchant();
-//        call.enqueue(new Callback<ArrayList<CategoryModel>>() {
-//            @Override
-//            public void onResponse(Call<ArrayList<CategoryModel>> call, Response<ArrayList<CategoryModel>> response) {
-//                if (response.body().size() > 0){
-//                    for (int i=0;i<response.body().size();i++){
-//                        CategoryModel cm = response.body().get(i);
-//                        CategoryModel newCm = new CategoryModel();
-//                        Crud crud = new Crud(context, newCm);
-//                        RealmResults results = crud.read("idMerchantCategory", cm.getIdMerchantCategory());
-//                        if (results.size() > 0){
-//                            /*check sha*/
-//                            newCm = (CategoryModel) results.get(0);
-//                            assert newCm != null;
-//                            if (!cm.getSha().equalsIgnoreCase(newCm.getSha())){
-//                                if (cm.getDeleted().equalsIgnoreCase("Y")){
-//                                    crud.delete("idMerchantCategory", cm.getIdMerchantCategory());
-//                                }else{
-//                                    /*update kategori*/
-//                                    crud.openObject();
-//                                    newCm.setMerchantCategory(cm.getMerchantCategory());
-//                                    newCm.setDateAdd(cm.getDateAdd());
-//                                    newCm.setDeleted(cm.getDeleted());
-//                                    newCm.setMaxUpload(cm.getMaxUpload());
-//                                    newCm.setSha(cm.getSha());
-//                                    newCm.setStatus(cm.getStatus());
-//                                    crud.update(newCm);
-//                                    crud.commitObject();
-//                                }
-//                            }
-//                        }else{
-//                            if (cm.getDeleted().equalsIgnoreCase("N")){
-//                                /*insert*/
-//                                crud.create(cm);
-//                            }
-//                        }
-//                        crud.closeRealm();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArrayList<CategoryModel>> call, Throwable t) {
-//
-//            }
-//        });
-//    }
     public void syncCategoryMerchantByRx(){
         interfaceMethod.getCategoryMerchantByRx()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
+                .unsubscribeOn(Schedulers.io())
                 .subscribe(new Observer<ArrayList<CategoryModel>>() {
                     @Override
                     public void onCompleted() {
@@ -254,94 +164,50 @@ public class AdapterModel implements SessionListener{
                 });
     }
     public void syncInfoByRx(){
-        if (session.getToken().equalsIgnoreCase("nothing")){
-            interfaceMethod.fetch_info_rx(session.getToken())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.newThread())
-                    .subscribe(new Observer<ArrayList<ResponseLoginModel>>() {
-                        @Override
-                        public void onNext(ArrayList<ResponseLoginModel> value) {
-                            if (value.size()> 0){
-                                for (int i = 0;i<value.size();i++) {
-                                    ResponseLoginModel responseLoginModel = value.get(i);
-                                    assert responseLoginModel != null;
-                                    String sha = responseLoginModel.getSha();
-                                    assert sha != null;
-                                    if (!session.getCustomParams(Session.SSHA, "nothing").equalsIgnoreCase(sha)){
-                                        String nama = responseLoginModel.getName();
-                                        String alamat = responseLoginModel.getAddress();
-                                        String notelp = responseLoginModel.getPhone();
-                                        String email = responseLoginModel.getEmail();
-                                        String token = responseLoginModel.getKey();
-                                        String status = responseLoginModel.getStatus();
-                                        String image = responseLoginModel.getPhoto();
-                                        String deskripsi = "";
-                                        String jamBuka = responseLoginModel.getOpenAt();
-                                        String jamTutup = responseLoginModel.getCloseAt();
+        interfaceMethod.fetch_info_rx(session.getToken())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.newThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(new Observer<ArrayList<ResponseLoginModel>>() {
+                    @Override
+                    public void onNext(ArrayList<ResponseLoginModel> value) {
+                        if (value.size()> 0){
+                            for (int i = 0;i<value.size();i++) {
+                                ResponseLoginModel responseLoginModel = value.get(i);
+                                assert responseLoginModel != null;
+                                String sha = responseLoginModel.getSha();
+                                assert sha != null;
+                                if (!session.getCustomParams(Session.SSHA, "nothing").equalsIgnoreCase(sha)){
+                                    String nama = responseLoginModel.getName();
+                                    String alamat = responseLoginModel.getAddress();
+                                    String notelp = responseLoginModel.getPhone();
+                                    String email = responseLoginModel.getEmail();
+                                    String token = responseLoginModel.getKey();
+                                    String status = responseLoginModel.getStatus();
+                                    String image = responseLoginModel.getPhoto();
+                                    String deskripsi = "";
+                                    String jamBuka = responseLoginModel.getOpenAt();
+                                    String jamTutup = responseLoginModel.getCloseAt();
 
-                                        session.setCustomParams(Session.SSHA, sha);
+                                    session.setCustomParams(Session.SSHA, sha);
 
-                                        session.setSession(nama, alamat, notelp, email, token, status, image, deskripsi, jamBuka, jamTutup);
-                                    }
-
+                                    session.setSession(nama, alamat, notelp, email, token, status, image, deskripsi, jamBuka, jamTutup);
                                 }
 
                             }
-                        }
 
-                        @Override
-                        public void onCompleted() {
                         }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                        }
-                    });
+                    @Override
+                    public void onCompleted() {
+                    }
 
-        }
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
     }
-//    public void syncInfo(){
-//        if (!session.getToken().equalsIgnoreCase("nothing")){
-//            Call<ArrayList<ResponseLoginModel>> call = interfaceMethod.fetch_info(session.getToken());
-//            call.enqueue(new Callback<ArrayList<ResponseLoginModel>>() {
-//                @Override
-//                public void onResponse(Call<ArrayList<ResponseLoginModel>> call, Response<ArrayList<ResponseLoginModel>> response) {
-//                    if (response.body()!=null){
-//                        for (int i = 0;i<response.body().size();i++) {
-//                            ResponseLoginModel responseLoginModel = response.body().get(i);
-//                            assert responseLoginModel != null;
-//                            String sha = responseLoginModel.getSha();
-//                            assert sha != null;
-//                            if (!session.getCustomParams(Session.SSHA, "nothing").equalsIgnoreCase(sha)){
-//                                String nama = responseLoginModel.getName();
-//                                String alamat = responseLoginModel.getAddress();
-//                                String notelp = responseLoginModel.getPhone();
-//                                String email = responseLoginModel.getEmail();
-//                                String token = responseLoginModel.getKey();
-//                                String status = responseLoginModel.getStatus();
-//                                String image = responseLoginModel.getPhoto();
-//                                String deskripsi = "";
-//                                String jamBuka = responseLoginModel.getOpenAt();
-//                                String jamTutup = responseLoginModel.getCloseAt();
-//
-//                                session.setCustomParams(Session.SSHA, sha);
-//
-//                                session.setSession(nama, alamat, notelp, email, token, status, image, deskripsi, jamBuka, jamTutup);
-//                            }
-//
-//                        }
-//
-//                    }
-//
-//                }
-//
-//                @Override
-//                public void onFailure(Call<ArrayList<ResponseLoginModel>> call, Throwable t) {
-//
-//                }
-//            });
-//        }
-//    }
 
     public void syncMenu(){
         if (!session.getToken().equalsIgnoreCase("nothing")){
@@ -403,6 +269,7 @@ public class AdapterModel implements SessionListener{
             interfaceMethod.getMenuByRx(session.getToken())
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.newThread())
+                    .unsubscribeOn(Schedulers.io())
                     .subscribe(new Observer<ArrayList<MenuMerchantModel>>() {
                         @Override
                         public void onCompleted() {

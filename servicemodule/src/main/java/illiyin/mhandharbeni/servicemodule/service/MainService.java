@@ -34,6 +34,12 @@ public class MainService extends Service {
 
     @Override
     public void onCreate() {
+//        adapterModel = new AdapterModel(getApplicationContext());
+//        adapterModel.syncCategoryMenuByRx();
+//        adapterModel.syncCategoryMerchantByRx();
+//        adapterModel.syncInfoByRx();
+//        adapterModel.syncMenuByRx();
+
         session = new Session(getApplicationContext(), new SessionListener() {
             @Override
             public void sessionChange() {

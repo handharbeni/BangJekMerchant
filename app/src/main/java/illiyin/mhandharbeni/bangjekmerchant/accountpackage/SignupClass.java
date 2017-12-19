@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +22,10 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentMenu;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.FragmentProfile;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
-import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
