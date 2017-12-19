@@ -22,6 +22,6 @@ public class CategoryMenuService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        adapterModel.syncCategoryMenu();
+        adapterModel.syncCategoryMenuByRx();
     }
 }

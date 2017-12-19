@@ -10,6 +10,7 @@ import android.os.IBinder;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMenuService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMerchantService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.MenuMerchantService;
@@ -28,6 +29,8 @@ public class MainService extends Service {
     private Handler handler = new Handler();
     private Timer timer = null;
     private Session session;
+
+    private AdapterModel adapterModel;
 
     @Override
     public void onCreate() {

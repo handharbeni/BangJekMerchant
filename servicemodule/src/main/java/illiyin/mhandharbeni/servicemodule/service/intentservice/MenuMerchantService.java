@@ -22,6 +22,6 @@ public class MenuMerchantService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        adapterModel.syncMenu();
+        adapterModel.syncMenuByRx();
     }
 }

@@ -19,7 +19,11 @@ public class Session implements EncryptedPreferences.OnSharedPreferenceChangeLis
             STATUS = "STATUS",
             CONNECTION = "CONNECTION",
             IMAGE = "IMAGE",
-            SSHA = "SHA";
+            SSHA = "SHA",
+            DESKRIPSI = "DESKRIPSI",
+            JAM_BUKA = "JAM_BUKA",
+            JAM_TUTUP = "JAM_TUTUP";
+
     public String STATELOGIN = "STATELOGIN";/*true belum login, false Sudah Login*/
 
     Context context;
@@ -87,7 +91,7 @@ public class Session implements EncryptedPreferences.OnSharedPreferenceChangeLis
         return encryptedPreferences.getFloat(key, method);
     }
 
-    public void setSession(String nama, String alamat, String notelp, String email, String key, String status, String image){
+    public void setSession(String nama, String alamat, String notelp, String email, String key, String status, String image, String deskripsi, String jam_buka, String jam_tutup){
         encryptedPreferences.edit()
                 .putString(NAMA, nama)
                 .putString(ALAMAT, alamat)
@@ -96,6 +100,9 @@ public class Session implements EncryptedPreferences.OnSharedPreferenceChangeLis
                 .putString(KEY, encryptedPreferences.getUtils().encryptStringValue(key))
                 .putString(STATUS, status)
                 .putString(IMAGE, image)
+                .putString(DESKRIPSI, deskripsi)
+                .putString(JAM_BUKA, jam_buka)
+                .putString(JAM_TUTUP, jam_tutup)
                 .apply();
     }
     public Boolean checkSession(){

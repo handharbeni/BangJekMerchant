@@ -24,6 +24,6 @@ public class CategoryMerchantService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        adapterModel.syncCategoryMerchant();
+        adapterModel.syncCategoryMerchantByRx();
     }
 }

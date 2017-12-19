@@ -10,7 +10,7 @@ import java.util.TimeZone;
  * Created by root on 10/3/17.
  */
 
-public class DateFormat {
+public class DateFormats {
     public String format(String dates) throws ParseException {
         String conMonth = "";
 

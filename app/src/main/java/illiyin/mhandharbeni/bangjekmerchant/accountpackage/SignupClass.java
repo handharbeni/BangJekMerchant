@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -35,6 +36,7 @@ import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
 import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import illiyin.mhandharbeni.utilslibrary.TimePicker;
 import io.realm.RealmResults;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -59,7 +61,8 @@ public class SignupClass extends AppCompatActivity {
 
     private ArrayAdapter<String> adapter;
 
-    private EditText txtNamaUsaha, txtAlamat, txtEmail, txtPassword, txtNoTelp, txtDeskripsi, txtJamBuka, txtJamTutup;
+    private EditText txtNamaUsaha, txtAlamat, txtEmail, txtPassword, txtNoTelp, txtDeskripsi;
+    private TextView txtJamBuka, txtJamTutup;
     private Button btnRegister;
     private CircleImageView image;
     private Session session;
@@ -99,8 +102,8 @@ public class SignupClass extends AppCompatActivity {
         txtPassword = (EditText) findViewById(R.id.txtPassword);
         txtNoTelp = (EditText) findViewById(R.id.txtNoTelp);
         txtDeskripsi = (EditText) findViewById(R.id.txtDeskripsi);
-        txtJamBuka = (EditText) findViewById(R.id.txtJamBuka);
-        txtJamTutup = (EditText) findViewById(R.id.txtJamTutup);
+        txtJamBuka = (TextView) findViewById(R.id.txtJamBuka);
+        txtJamTutup = (TextView) findViewById(R.id.txtJamTutup);
         image = (CircleImageView) findViewById(R.id.images);
         kategori = (MaterialBetterSpinner) findViewById(R.id.txtInputKategori);
         btnRegister = (Button) findViewById(R.id.btnRegister);
@@ -132,6 +135,34 @@ public class SignupClass extends AppCompatActivity {
                 final Intent chooserIntent = Intent.createChooser(galleryIntent, "Pilih Image");
                 startActivityForResult(chooserIntent, 1010);
 
+            }
+        });
+        txtJamBuka.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    showTimePickerDialog(txtJamBuka);
+                }
+            }
+        });
+        txtJamBuka.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(txtJamBuka);
+            }
+        });
+        txtJamTutup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    showTimePickerDialog(txtJamTutup);
+                }
+            }
+        });
+        txtJamTutup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(txtJamTutup);
             }
         });
     }
@@ -229,5 +260,9 @@ public class SignupClass extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, list);
 
         kategori.setAdapter(adapter);
+    }
+    public void showTimePickerDialog(TextView v) {
+        DialogFragment newFragment = new TimePicker(v);
+        newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 }

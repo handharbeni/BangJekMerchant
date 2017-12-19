@@ -255,7 +255,7 @@ public class MainClass extends AppCompatActivity
         txtNamaMerchant.setText(nama);
         txtAlamatMerchant.setText(alamat);
         txtDeskripsiMerchant.setText(deskripsi);
-        Glide.with(this).load(photo).into(image);
+        Glide.with(MainClass.this).load(photo).into(image);
 
     }
     private void fill_information_header(){

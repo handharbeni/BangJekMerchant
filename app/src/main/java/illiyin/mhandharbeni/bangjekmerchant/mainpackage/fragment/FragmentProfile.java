@@ -44,7 +44,8 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
     private Session session;
 
     private AdapterModel adapterModel;
-    private TextView txtNamaUsaha, txtAlamat, txtEmail, txtNoTelp, txtDeskripsi, txtJamBuka, txtJamTutup;
+    private TextView txtNamaUsaha, txtAlamat, txtEmail, txtNoTelp, txtDeskripsi;
+    private TextView txtJamBuka, txtJamTutup;
     private Button btnRegister;
 
     @Override
@@ -99,6 +100,9 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
             txtAlamat.setText(session.getCustomParams(Session.ALAMAT, "Not Available"));
             txtEmail.setText(session.getCustomParams(Session.EMAIL, "Not Available"));
             txtNoTelp.setText(session.getCustomParams(Session.NOTELP, "Not Available"));
+            txtDeskripsi.setText(session.getCustomParams(Session.DESKRIPSI, "Not Available"));
+            txtJamBuka.setText(session.getCustomParams(Session.JAM_BUKA, "Not Available"));
+            txtJamTutup.setText(session.getCustomParams(Session.JAM_TUTUP, "Not Available"));
 //            txtDeskripsi.setText(session.getCustomParams(Session.NAMA, "Not Available"));
 //            txtJamBuka.setText(session.getCustomParams(Session.NAMA, "Not Available"));
 //            txtJamTutup.setText(session.getCustomParams(Session.NAMA, "Not Available"));

@@ -22,6 +22,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import rx.Observable;
 
 /**
  * Created by root on 11/24/17.
@@ -32,12 +33,23 @@ public interface InterfaceMethod {
     @GET("merchant/listcategory")
     Call<ArrayList<CategoryModel>> getCategoryMerchant();
 
+    @GET("merchant/listcategory")
+    Observable<ArrayList<CategoryModel>> getCategoryMerchantByRx();
+
     @GET("merchant/listcategorymenu")
     Call<ArrayList<CategoryMenuModel>> getCategoryMenu();
+
+    @GET("merchant/listcategorymenu")
+    Observable<ArrayList<CategoryMenuModel>> getCategoryMenuByRx();
 
     @FormUrlEncoded
     @POST("merchant/read_menu")
     Call<ArrayList<MenuMerchantModel>> getMenu(@Field("key") String key);
+
+    @FormUrlEncoded
+    @POST("merchant/read_menu")
+    Observable<ArrayList<MenuMerchantModel>> getMenuByRx(@Field("key") String key);
+
 
     @POST("merchant/register")
     Call<String> register(@Body BodyRegisterModel registerModel);
@@ -48,6 +60,11 @@ public interface InterfaceMethod {
     @FormUrlEncoded
     @POST("merchant/fetch_info")
     Call<ArrayList<ResponseLoginModel>> fetch_info(@Field("key") String key);
+
+    @FormUrlEncoded
+    @POST("merchant/fetch_info")
+    Observable<ArrayList<ResponseLoginModel>> fetch_info_rx(@Field("key") String key);
+
 
     @POST("merchant/create_menu")
     Call<String> createMenu(@Body BodyCreateMenu bodyCreateMenu);

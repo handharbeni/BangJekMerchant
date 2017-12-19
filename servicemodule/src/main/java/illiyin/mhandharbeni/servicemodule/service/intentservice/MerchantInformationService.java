@@ -22,6 +22,6 @@ public class MerchantInformationService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        adapterModel.syncInfo();
+        adapterModel.syncInfoByRx();
     }
 }
