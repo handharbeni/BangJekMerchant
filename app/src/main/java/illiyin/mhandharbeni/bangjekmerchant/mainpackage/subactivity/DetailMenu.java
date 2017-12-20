@@ -51,8 +51,8 @@ public class DetailMenu extends AppCompatActivity {
     private Crud crudKategoriMenu;
     private CategoryMenuModel categoryMenuModel;
 
-    private TextView txtNamaMenu, txtHargaMenu, txtDeskripsiMenu, txtDeleteMenu, txtDiscountMenu, txtDiscountVariantMenu;
-    private MaterialBetterSpinner txtKategori;
+    private TextView txtNamaMenu, txtHargaMenu, txtDeskripsiMenu, txtDeleteMenu, txtDiscountMenu;
+    private MaterialBetterSpinner txtKategori, txtDiscountVariantMenu;
     private CircleImageView images;
 
     private Button btnSaveMenu;
@@ -60,6 +60,7 @@ public class DetailMenu extends AppCompatActivity {
 
     private String imagePath;
     private String imageCurrent;
+    private ArrayAdapter<String> adapterDiscountVariant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,13 +85,14 @@ public class DetailMenu extends AppCompatActivity {
         txtHargaMenu = (TextView) findViewById(R.id.txtHargaMenu);
         txtDeskripsiMenu = (TextView) findViewById(R.id.txtDeskripsiMenu);
         txtDiscountMenu = (TextView) findViewById(R.id.txtDiscountMenu);
-        txtDiscountVariantMenu = (TextView) findViewById(R.id.txtDiscountVariantMenu);
+        txtDiscountVariantMenu = (MaterialBetterSpinner) findViewById(R.id.txtDiscountVariantMenu);
         txtDeleteMenu = (TextView) findViewById(R.id.txtDeleteMenu);
         txtKategori = (MaterialBetterSpinner) findViewById(R.id.txtKategori);
         btnSaveMenu = (Button) findViewById(R.id.btnSaveMenu);
     }
     private void fetch_modules(){
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("TAMBAH MENU");
 
         adapterModel = new AdapterModel(this);
         session = new Session(this, new SessionListener() {
@@ -116,6 +118,13 @@ public class DetailMenu extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, list);
 
         txtKategori.setAdapter(adapter);
+        ArrayList<String> listDiscountVariant = new ArrayList<>();
+        listDiscountVariant.add("%");
+        listDiscountVariant.add("Cash");
+
+        adapterDiscountVariant = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, listDiscountVariant);
+        txtDiscountVariantMenu.setAdapter(adapterDiscountVariant);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

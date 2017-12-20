@@ -185,7 +185,7 @@ public class AdapterModel implements SessionListener{
                                     String token = responseLoginModel.getKey();
                                     String status = responseLoginModel.getStatus();
                                     String image = responseLoginModel.getPhoto();
-                                    String deskripsi = "";
+                                    String deskripsi = responseLoginModel.getDescription();
                                     String jamBuka = responseLoginModel.getOpenAt();
                                     String jamTutup = responseLoginModel.getCloseAt();
 
@@ -413,7 +413,7 @@ public class AdapterModel implements SessionListener{
                         String status = responseLoginModel.getStatus();
                         String image = responseLoginModel.getPhone();
                         String sha = responseLoginModel.getSha();
-                        String deskripsi = "";
+                        String deskripsi = responseLoginModel.getDescription();
                         String jamBuka = responseLoginModel.getOpenAt();
                         String jamTutup = responseLoginModel.getCloseAt();
 

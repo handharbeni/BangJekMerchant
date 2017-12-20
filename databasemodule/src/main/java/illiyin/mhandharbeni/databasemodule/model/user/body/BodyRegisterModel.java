@@ -21,6 +21,10 @@ public class BodyRegisterModel {
     @Expose
     public String email;
 
+    @SerializedName("description")
+    @Expose
+    public String description;
+
     @SerializedName("password")
     @Expose
     public String password;

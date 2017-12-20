@@ -30,6 +30,7 @@
             app:layout_constraintTop_toBottomOf="@+id/include3">
 
             <android.support.design.widget.TextInputEditText
+                android:maxLength="15"
                 android:id="@+id/txtNamaMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,6 +65,8 @@
             app:layout_constraintTop_toBottomOf="@+id/txtKategori">
 
             <android.support.design.widget.TextInputEditText
+                android:inputType="number"
+                android:maxLength="6"
                 android:id="@+id/txtHargaMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,6 +108,8 @@
             app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutDeskripsi">
 
             <android.support.design.widget.TextInputEditText
+                android:inputType="number"
+                android:maxLength="6"
                 android:id="@+id/txtDiscountMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -113,8 +118,10 @@
                 android:imeOptions="actionNext"
                 android:lines="1" />
         </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/txtInputLayoutDiscountVariant"
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+
+            android:id="@+id/txtDiscountVariantMenu"
+            android:hint="Discount Variant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -122,17 +129,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutDiscount">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/txtDiscountVariantMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:hint="Discount Variant"
-                android:imeOptions="actionNext"
-                android:lines="1" />
-        </android.support.design.widget.TextInputLayout>
+            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutDiscount"/>
         <Button
             android:background="@drawable/rounded_button_selector"
             android:textColor="@color/colorWhite"
@@ -145,6 +142,6 @@
             android:text="@string/placeholder_simpan"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutDiscountVariant" />
+            app:layout_constraintTop_toBottomOf="@+id/txtDiscountVariantMenu" />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

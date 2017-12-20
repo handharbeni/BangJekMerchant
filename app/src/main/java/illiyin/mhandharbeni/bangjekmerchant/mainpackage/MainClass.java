@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -143,8 +145,8 @@ public class MainClass extends AppCompatActivity
 //            if (indexTabActive == 1){
 //                requestCode = FragmentMenu.requestCode;
 //            }
-//            Intent i = new Intent(getApplicationContext(), DetailMenu.class);
-//            startActivityForResult(i, requestCode);
+            Intent i = new Intent(getApplicationContext(), DetailMenu.class);
+            startActivityForResult(i, FragmentMenu.requestCode);
             return true;
         }
 
@@ -155,8 +157,12 @@ public class MainClass extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
+            collapseActionBar(true);
+
             changeFragment(new FragmentHome());
         } else if (id == R.id.nav_help) {
+            collapseActionBar(false);
+
             changeFragment(new FragmentHelp());
         } else if (id == R.id.nav_logout){
             session.deleteSession();
@@ -169,6 +175,10 @@ public class MainClass extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void collapseActionBar(Boolean expanded){
+        AppBarLayout appBarLayout =  (AppBarLayout) findViewById(R.id.appbar_layout);
+        appBarLayout.setExpanded(expanded);
     }
     private void changeFragment(Fragment fragment){
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -266,8 +276,7 @@ public class MainClass extends AppCompatActivity
         txtNamaMerchant.setText(nama);
         txtAlamatMerchant.setText(alamat);
         txtDeskripsiMerchant.setText(deskripsi);
-        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(image);
-
+        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(image).onLoadFailed(getResources().getDrawable(R.drawable.ic_photocamera));
     }
     private void fill_information_header(){
         View headerView = navigationView.getHeaderView(0);
@@ -276,7 +285,7 @@ public class MainClass extends AppCompatActivity
         String email = session.getCustomParams(Session.EMAIL, "nothing");
         String photo = session.getCustomParams(Session.IMAGE, "nothing");
         emailMerchant.setText(email);
-        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(imageHeader);
+        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(imageHeader).onLoadFailed(getResources().getDrawable(R.drawable.ic_photocamera));
     }
 
     @Override

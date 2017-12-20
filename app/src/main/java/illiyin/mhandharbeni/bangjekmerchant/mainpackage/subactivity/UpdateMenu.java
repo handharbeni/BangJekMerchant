@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
@@ -64,8 +65,8 @@ public class UpdateMenu extends AppCompatActivity {
     private Crud crudKategoriMenu;
     private CategoryMenuModel categoryMenuModel;
 
-    private TextView txtNamaMenu, txtHargaMenu, txtDeskripsiMenu, txtDeleteMenu, txtDiscountMenu, txtDiscountVariantMenu;
-    private MaterialBetterSpinner txtKategori;
+    private TextView txtNamaMenu, txtHargaMenu, txtDeskripsiMenu, txtDeleteMenu, txtDiscountMenu;
+    private MaterialBetterSpinner txtKategori, txtDiscountVariantMenu;
     private CircleImageView images;
     private Button btnSaveMenu;
 
@@ -74,6 +75,8 @@ public class UpdateMenu extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private String imagePath;
     private String imageCurrent;
+
+    private ArrayAdapter<String> adapterDiscountVariant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,13 +107,14 @@ public class UpdateMenu extends AppCompatActivity {
         txtHargaMenu = (TextView) findViewById(R.id.txtHargaMenu);
         txtDeskripsiMenu = (TextView) findViewById(R.id.txtDeskripsiMenu);
         txtDiscountMenu = (TextView) findViewById(R.id.txtDiscountMenu);
-        txtDiscountVariantMenu = (TextView) findViewById(R.id.txtDiscountVariantMenu);
+        txtDiscountVariantMenu = (MaterialBetterSpinner) findViewById(R.id.txtDiscountVariantMenu);
         txtDeleteMenu = (TextView) findViewById(R.id.txtDeleteMenu);
         txtKategori = (MaterialBetterSpinner) findViewById(R.id.txtKategori);
         btnSaveMenu = (Button) findViewById(R.id.btnSaveMenu);
     }
     private void fetch_modules(){
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("DETAIL MENU");
 
         adapterModel = new AdapterModel(this);
         session = new Session(this, new SessionListener() {
@@ -141,6 +145,15 @@ public class UpdateMenu extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, list);
 //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         txtKategori.setAdapter(adapter);
+
+
+        ArrayList<String> listDiscountVariant = new ArrayList<>();
+        listDiscountVariant.add("%");
+        listDiscountVariant.add("Cash");
+
+        adapterDiscountVariant = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, listDiscountVariant);
+        txtDiscountVariantMenu.setAdapter(adapterDiscountVariant);
     }
     private void fetch_data_menu(){
         RealmResults resultMenu = crud.read("idMerchantMenu", id);

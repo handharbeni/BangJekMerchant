@@ -93,7 +93,7 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
             txtDeskripsi.setText(session.getCustomParams(Session.DESKRIPSI, "Not Available"));
             txtJamBuka.setText(session.getCustomParams(Session.JAM_BUKA, "Not Available"));
             txtJamTutup.setText(session.getCustomParams(Session.JAM_TUTUP, "Not Available"));
-//            txtDeskripsi.setText(session.getCustomParams(Session.NAMA, "Not Available"));
+            txtDeskripsi.setText(session.getCustomParams(Session.DESKRIPSI, "Not Available"));
 //            txtJamBuka.setText(session.getCustomParams(Session.NAMA, "Not Available"));
 //            txtJamTutup.setText(session.getCustomParams(Session.NAMA, "Not Available"));
 
@@ -106,6 +106,7 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
         txtNoTelp.setOnFocusChangeListener(this);
         txtJamBuka.setOnFocusChangeListener(this);
         txtJamTutup.setOnFocusChangeListener(this);
+        txtDeskripsi.setOnFocusChangeListener(this);
         txtJamBuka.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,6 +189,8 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
                 do_save("email", txtEmail.getText().toString());
             }else if (view.getId() == R.id.txtNoTelp){
                 do_save("phone", txtNoTelp.getText().toString());
+            }else if(view.getId() == R.id.txtDeskripsi){
+                do_save("description", txtDeskripsi.getText().toString());
             }
         }
     }

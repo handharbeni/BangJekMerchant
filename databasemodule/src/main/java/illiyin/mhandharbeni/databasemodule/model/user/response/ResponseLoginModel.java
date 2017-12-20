@@ -20,6 +20,9 @@ public class ResponseLoginModel {
     @SerializedName("email")
     @Expose
     private String email;
+    @SerializedName("description")
+    @Expose
+    private String description;
     @SerializedName("password")
     @Expose
     private String password;
@@ -74,6 +77,15 @@ public class ResponseLoginModel {
     @SerializedName("sha")
     @Expose
     private String sha;
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getIdMerchant() {
         return idMerchant;

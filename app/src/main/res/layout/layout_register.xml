@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal">
 
@@ -49,12 +50,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+
+        <TextView
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:layout_marginLeft="@dimen/padding_lr_default"
             android:layout_marginRight="@dimen/padding_lr_default"
+            android:layout_marginEnd="31dp"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/labelKategori"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_kategori_merchant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageInclude" />
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/txtInputKategori"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_marginLeft="@dimen/padding_lr_default"
+            android:layout_marginRight="@dimen/padding_lr_default"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="31dp"
@@ -63,7 +81,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageInclude"
+            app:layout_constraintTop_toBottomOf="@+id/labelKategori"
             tools:layout_editor_absoluteY="226dp">
         </com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner>
         <android.support.design.widget.TextInputLayout
@@ -74,7 +92,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="31dp"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -209,6 +226,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
+            android:id="@+id/txtLabelJam"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="31dp"
@@ -221,6 +239,41 @@
             app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutDeskripsi">
 
             <TextView
+                android:gravity="center"
+                android:textSize="18sp"
+                android:id="@+id/txtLabelJamBuka"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/plceholder_jambuka" />
+
+            <TextView
+                android:gravity="center"
+                android:textSize="18sp"
+                android:id="@+id/txtLabelJamTutup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/placeholder_jamtutup" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="31dp"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtLabelJam">
+
+            <TextView
+                android:gravity="center"
                 android:textSize="18sp"
                 android:id="@+id/txtJamBuka"
                 android:layout_width="wrap_content"
@@ -230,6 +283,7 @@
                 android:hint="@string/plceholder_jambuka" />
 
             <TextView
+                android:gravity="center"
                 android:textSize="18sp"
                 android:id="@+id/txtJamTutup"
                 android:layout_width="wrap_content"
@@ -237,6 +291,7 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/placeholder_jamtutup" />
+
         </LinearLayout>
 
 

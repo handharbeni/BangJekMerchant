@@ -5,8 +5,8 @@ android {
         config {
             keyAlias 'keyrelease'
             keyPassword 'nollimakali'
-            storeFile file('/Users/faizalqurni/AndroidProject/BangJekMerchant/keystore.jks')
-//            storeFile file('/home/mhandharbeni/Documents/AndroidProject/BangJekMerchant/keystore.jks')
+//            storeFile file('/Users/faizalqurni/AndroidProject/BangJekMerchant/keystore.jks')
+            storeFile file('/home/mhandharbeni/Documents/AndroidProject/BangJekMerchant/keystore.jks')
             storePassword 'nollimakali'
         }
     }

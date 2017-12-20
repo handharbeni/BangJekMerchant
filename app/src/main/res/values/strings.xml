@@ -6,7 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="placeholder_username">Username</string>
+    <string name="placeholder_username">Email</string>
     <string name="placeholder_password">Password</string>
     <string name="placeholder_button_login">LOGIN</string>
     <string name="placeholder_ask">Belum Punya Akun?</string>
@@ -38,4 +38,5 @@
     <string name="caption_register_failed">Register Gagal</string>
     <string name="placeholder_simpan_profile">SIMPAN</string>
     <string name="placeholder_bantuan">Untuk Bantuan atau Masukan\n Kirim Email Ke admin@bangjek.com</string>
+    <string name="placeholder_kategori_merchant">Kategori Merchant</string>
 </resources>
