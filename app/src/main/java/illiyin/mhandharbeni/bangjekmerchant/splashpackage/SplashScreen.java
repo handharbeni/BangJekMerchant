@@ -29,7 +29,7 @@ public class SplashScreen extends AppCompatActivity implements SessionListener{
     @Override
     protected void onStart() {
         super.onStart();
-        requestPermission();
+//        requestPermission();
         run_service();
         session = new Session(this, this);
         String state = session.getToken();

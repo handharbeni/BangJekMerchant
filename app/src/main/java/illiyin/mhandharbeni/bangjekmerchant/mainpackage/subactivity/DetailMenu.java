@@ -1,6 +1,8 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -27,9 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
-import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyCreateMenu;
-import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMenu;
 import illiyin.mhandharbeni.realmlibrary.Crud;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
@@ -43,7 +43,7 @@ import okhttp3.RequestBody;
  */
 
 public class DetailMenu extends AppCompatActivity {
-    private static String IMAGE_CURRENT = "ImageCurrent";
+    private static String IMAGE_CURRENT = "ImageCurrents";
 
     private AdapterModel adapterModel;
     private Session session;
@@ -61,6 +61,7 @@ public class DetailMenu extends AppCompatActivity {
     private String imagePath;
     private String imageCurrent;
     private ArrayAdapter<String> adapterDiscountVariant;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +116,8 @@ public class DetailMenu extends AppCompatActivity {
             }
         }
         adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, list);
+                R.layout.item_spinner_with_padding, list);
+        adapter.setDropDownViewResource(R.layout.item_spinner_with_padding);
 
         txtKategori.setAdapter(adapter);
         ArrayList<String> listDiscountVariant = new ArrayList<>();
@@ -123,7 +125,8 @@ public class DetailMenu extends AppCompatActivity {
         listDiscountVariant.add("Cash");
 
         adapterDiscountVariant = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, listDiscountVariant);
+                R.layout.item_spinner_with_padding, listDiscountVariant);
+        adapterDiscountVariant.setDropDownViewResource(R.layout.item_spinner_with_padding);
         txtDiscountVariantMenu.setAdapter(adapterDiscountVariant);
     }
     @Override
@@ -172,7 +175,7 @@ public class DetailMenu extends AppCompatActivity {
             showToast("Menu Berhasil Di Tambah");
             onBackPressed();
         }else{
-            showToast("Menu Gagal Di Tambah");
+            showToast("Menu Gagal Di Tambah, Field Harus Lengkap");
         }
     }
     private void fetch_click(){
@@ -197,6 +200,7 @@ public class DetailMenu extends AppCompatActivity {
     private String getIdCategoryMerchant(String label){
         RealmResults results = crudKategoriMenu.read("merchantMenuCategory", label);
         CategoryMenuModel cmm = (CategoryMenuModel) results.get(0);
+        assert cmm != null;
         return cmm.getIdMerchantMenuCategory();
     }
     private void showToast(String message){
@@ -206,10 +210,17 @@ public class DetailMenu extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
+    private void showProgress(){
+        progressDialog = ProgressDialog.show(this, "UPLOAD IMAGE", "UPLOADING", true);
+    }
+    private void hideProgress(){
+        progressDialog.dismiss();
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
+            showProgress();
             //TODO: action
             if (data == null) {
                 //Display an error
@@ -218,21 +229,21 @@ public class DetailMenu extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
+            assert selectedImageUri != null;
+            @SuppressLint("Recycle")
             Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
 
             if (cursor != null) {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
-
-                Glide.with(this).load(new File(imagePath))
-                        .into(images);
                 try {
                     do_upload();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            hideProgress();
         }
     }
 

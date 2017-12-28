@@ -63,6 +63,7 @@
             android:id="@+id/txtPassword"
             android:singleLine="true"
             android:lines="1"
+            android:inputType="textPassword"
             android:imeOptions="actionNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -85,16 +85,16 @@ public class MainService extends Service {
                 @Override
                 public void run() {
                     if (!checkIsRunning(CategoryMenuService.class)){
-                        if (!session.getToken().equalsIgnoreCase("nothing")){
+//                        if (!session.getToken().equalsIgnoreCase("nothing")){
                             Intent is = new Intent(getBaseContext(), CategoryMenuService.class);
                             startService(is);
-                        }
+//                        }
                     }
                     if (!checkIsRunning(CategoryMerchantService.class)){
-                        if (!session.getToken().equalsIgnoreCase("nothing")){
+//                        if (!session.getToken().equalsIgnoreCase("nothing")){
                             Intent is = new Intent(getBaseContext(), CategoryMerchantService.class);
                             startService(is);
-                        }
+//                        }
                     }
                     if (!checkIsRunning(MenuMerchantService.class)){
                         if (!session.getToken().equalsIgnoreCase("nothing")){

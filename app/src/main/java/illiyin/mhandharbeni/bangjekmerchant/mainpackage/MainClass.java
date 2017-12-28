@@ -1,35 +1,36 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
-import com.h6ah4i.android.tablayouthelper.TabLayoutHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.accountpackage.SigninClass;
-import illiyin.mhandharbeni.bangjekmerchant.mainpackage.adapter.TabsPagerAdapter;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.FragmentHelp;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.FragmentHome;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentMenu;
@@ -56,13 +56,7 @@ import okhttp3.RequestBody;
 
 public class MainClass extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener, SessionListener {
-    private static final String TAG = "MainClass";
-    private static String IMAGE_CURRENT = "ImageCurrent";
     private String imagePath;
-
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private TabLayoutHelper mTabLayoutHelper;
 
     private Session session;
     private AdapterModel adapterModel;
@@ -70,7 +64,12 @@ public class MainClass extends AppCompatActivity
 
     private TextView txtNamaMerchant, txtAlamatMerchant, txtDeskripsiMerchant, emailMerchant;
     private CircleImageView image,imageHeader;
+    private ProgressDialog progressDialog;
+    private ToggleButton toggle;
 
+    private static String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
+    private static String FRAGMENT_HOME = "HOME";
+    private static String FRAGMENT_HELP = "HELP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,20 +88,11 @@ public class MainClass extends AppCompatActivity
         requestPermission();
     }
     public void init_view(){
-//        viewPager = (ViewPager) findViewById(R.id.pager);
-//        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-
+        toggle = (ToggleButton) findViewById(R.id.toggleStatus);
         txtNamaMerchant = (TextView) findViewById(R.id.txtNamaMerchant);
         txtAlamatMerchant = (TextView) findViewById(R.id.txtAlamatMerchant);
         txtDeskripsiMerchant = (TextView) findViewById(R.id.txtDeskripsiMerchant);
 
-
-//        viewPager.setAdapter(buildAdapter());
-//        mTabLayoutHelper = new TabLayoutHelper(tabLayout, viewPager);
-//        mTabLayoutHelper.setAutoAdjustTabModeEnabled(true);
-//        tabLayout.setupWithViewPager(viewPager);
-//        tabLayout.setTabTextColors(getResources().getColor(R.color.colorTabInActive), getResources().getColor(R.color.colorTabActive));
-//        tabLayout.addOnTabSelectedListener(this);
         image = (CircleImageView) findViewById(R.id.images);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,11 +105,40 @@ public class MainClass extends AppCompatActivity
                 startActivityForResult(chooserIntent, 1010);
             }
         });
-        changeFragment(new FragmentHome());
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    do_save("open_status", "Buka");
+                } else {
+                    // The toggle is disabled
+                    do_save("open_status", "Tutup");
+                }
+            }
+        });
+        changeFragment(new FragmentHome(), FRAGMENT_HOME);
     }
-    private PagerAdapter buildAdapter(){
-        return new TabsPagerAdapter(getSupportFragmentManager());
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Fragment fragment = new FragmentHome();
+        if (session.getCustomParams(CURRENT_FRAGMENT, FRAGMENT_HOME).equalsIgnoreCase(FRAGMENT_HELP)){
+            fragment = new FragmentHelp();
+        }
+        changeFragment(fragment, session.getCustomParams(CURRENT_FRAGMENT, FRAGMENT_HOME));
     }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -140,11 +159,6 @@ public class MainClass extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-//            int indexTabActive = tabLayout.getSelectedTabPosition();
-//            int requestCode = FragmentProfile.requestCode;
-//            if (indexTabActive == 1){
-//                requestCode = FragmentMenu.requestCode;
-//            }
             Intent i = new Intent(getApplicationContext(), DetailMenu.class);
             startActivityForResult(i, FragmentMenu.requestCode);
             return true;
@@ -159,11 +173,11 @@ public class MainClass extends AppCompatActivity
         if (id == R.id.nav_home) {
             collapseActionBar(true);
 
-            changeFragment(new FragmentHome());
+            changeFragment(new FragmentHome(), FRAGMENT_HOME);
         } else if (id == R.id.nav_help) {
             collapseActionBar(false);
 
-            changeFragment(new FragmentHelp());
+            changeFragment(new FragmentHelp(), FRAGMENT_HELP);
         } else if (id == R.id.nav_logout){
             session.deleteSession();
             delete_all_realm();
@@ -180,7 +194,8 @@ public class MainClass extends AppCompatActivity
         AppBarLayout appBarLayout =  (AppBarLayout) findViewById(R.id.appbar_layout);
         appBarLayout.setExpanded(expanded);
     }
-    private void changeFragment(Fragment fragment){
+    private void changeFragment(Fragment fragment, String title){
+        session.setCustomParams(CURRENT_FRAGMENT, title);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.mainFrameLayout, fragment);
         ft.commit();
@@ -227,10 +242,40 @@ public class MainClass extends AppCompatActivity
     public void onTabReselected(TabLayout.Tab tab) {
 
     }
+    private void showProgress(){
+        progressDialog = ProgressDialog.show(this, "UPLOAD IMAGE", "UPLOADING", true);
+    }
+    private void hideProgress(){
+        progressDialog.dismiss();
+    }
+    private void dialogChangeImage(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    do_upload();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    showSnackBar("Upload Image Gagal");
+                }
 
+            }
+        });
+        builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                hideProgress();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
+            showProgress();
             //TODO: action
             if (data == null) {
                 //Display an error
@@ -239,44 +284,37 @@ public class MainClass extends AppCompatActivity
             Uri selectedImageUri = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
+            assert selectedImageUri != null;
+            @SuppressLint("Recycle") Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
 
             if (cursor != null) {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
-
-                Glide.with(this).load(new File(imagePath))
-                        .into(image);
-                try {
-                    do_upload();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                dialogChangeImage("Ganti Image Profile?");
             }
-        }else if (requestCode == FragmentMenu.requestCode){
-            changeTab(1);
-        }else if (requestCode == FragmentProfile.requestCode){
-            changeTab(0);
         }
-    }
-    private void changeTab(final int position){
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                tabLayout.getTabAt(position).select();
-//            }
-//        }, 100);
     }
     private void fill_information_merchant(){
         String nama = session.getCustomParams(Session.NAMA, "nothing");
         String alamat = session.getCustomParams(Session.ALAMAT, "nothing");
         String deskripsi = session.getCustomParams(Session.EMAIL, "nothing");
         String photo = session.getCustomParams(Session.IMAGE, "nothing");
+        String status = session.getCustomParams(Session.STATUS, "Tutup");
         txtNamaMerchant.setText(nama);
         txtAlamatMerchant.setText(alamat);
         txtDeskripsiMerchant.setText(deskripsi);
-        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(image).onLoadFailed(getResources().getDrawable(R.drawable.ic_photocamera));
+        Boolean checked = false;
+        if (status.equalsIgnoreCase("Buka")){
+            checked = true;
+        }
+        toggle.setChecked(checked);
+        try {
+            Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(image);
+        }catch (IllegalStateException | IllegalArgumentException e){
+
+        }
+
     }
     private void fill_information_header(){
         View headerView = navigationView.getHeaderView(0);
@@ -285,7 +323,11 @@ public class MainClass extends AppCompatActivity
         String email = session.getCustomParams(Session.EMAIL, "nothing");
         String photo = session.getCustomParams(Session.IMAGE, "nothing");
         emailMerchant.setText(email);
-        Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(imageHeader).onLoadFailed(getResources().getDrawable(R.drawable.ic_photocamera));
+        try {
+            Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(imageHeader);
+        }catch (IllegalStateException | IllegalArgumentException e){
+
+        }
     }
 
     @Override
@@ -330,7 +372,7 @@ public class MainClass extends AppCompatActivity
 
     }
     private void showSnackBar(String message){
-//        new SnackBar(getApplicationContext()).view(this).message(message).build();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
     private void do_upload() throws IOException {
         File file = new File(imagePath);
@@ -340,9 +382,11 @@ public class MainClass extends AppCompatActivity
         String returns = adapterModel.uploadImage(body, key, getString(R.string.caption_upload_success), getString(R.string.caption_upload_failed));
         if (returns.equalsIgnoreCase(getString(R.string.caption_upload_success))){
             String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
-//            session.setCustomParams(IMAGE_CURRENT, locationFile);
             Glide.with(this).load(locationFile).into(image);
             do_save("photo", locationFile);
+        }else{
+            showSnackBar("Upload Image Gagal");
         }
+        hideProgress();
     }
 }

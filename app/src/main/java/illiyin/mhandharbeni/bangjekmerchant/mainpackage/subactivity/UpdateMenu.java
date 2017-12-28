@@ -1,36 +1,29 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
@@ -78,6 +71,8 @@ public class UpdateMenu extends AppCompatActivity {
 
     private ArrayAdapter<String> adapterDiscountVariant;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +112,7 @@ public class UpdateMenu extends AppCompatActivity {
         getSupportActionBar().setTitle("DETAIL MENU");
 
         adapterModel = new AdapterModel(this);
+        adapterModel.requestPermission();
         session = new Session(this, new SessionListener() {
             @Override
             public void sessionChange() {
@@ -142,17 +138,17 @@ public class UpdateMenu extends AppCompatActivity {
             }
         }
         adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, list);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                R.layout.item_spinner_with_padding, list);
+        adapter.setDropDownViewResource(R.layout.item_spinner_with_padding);
+
         txtKategori.setAdapter(adapter);
-
-
         ArrayList<String> listDiscountVariant = new ArrayList<>();
         listDiscountVariant.add("%");
         listDiscountVariant.add("Cash");
 
         adapterDiscountVariant = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, listDiscountVariant);
+                R.layout.item_spinner_with_padding, listDiscountVariant);
+        adapterDiscountVariant.setDropDownViewResource(R.layout.item_spinner_with_padding);
         txtDiscountVariantMenu.setAdapter(adapterDiscountVariant);
     }
     private void fetch_data_menu(){
@@ -166,7 +162,6 @@ public class UpdateMenu extends AppCompatActivity {
             txtNamaMenu.setText(mm.getMerchantMenu());
             txtHargaMenu.setText(mm.getPrice());
             txtDeskripsiMenu.setText(mm.getDescription());
-//            txtKategori.setText(mm.getIdMerchantMenuCategory());
             txtDiscountMenu.setText(mm.getDiscount());
             txtDiscountVariantMenu.setText(mm.getDiscountVariant());
 
@@ -300,15 +295,21 @@ public class UpdateMenu extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        showProgress();
+
         if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
+
             //TODO: action
             if (data == null) {
                 //Display an error
+                hideProgress();
                 return;
             }
             Uri selectedImageUri = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
+            assert selectedImageUri != null;
+            @SuppressLint("Recycle")
             Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
 
             if (cursor != null) {
@@ -319,15 +320,23 @@ public class UpdateMenu extends AppCompatActivity {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
 
-                Glide.with(this).load(new File(imagePath))
-                        .into(images);
                 try {
                     do_upload();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Toast.makeText(this, "Upload Image Gagal", Toast.LENGTH_SHORT).show();
                 }
             }
         }
+
+        hideProgress();
+    }
+
+    private void showProgress(){
+        progressDialog = ProgressDialog.show(this, "UPLOAD IMAGE", "UPLOADING", true);
+    }
+    private void hideProgress(){
+        progressDialog.dismiss();
     }
 
     private void do_upload() throws IOException {
@@ -341,6 +350,8 @@ public class UpdateMenu extends AppCompatActivity {
             imageCurrent = locationFile;
             session.setCustomParams(IMAGE_CURRENT, locationFile);
             Glide.with(this).load(locationFile).into(images);
+        }else{
+            Toast.makeText(this, "Upload Image Gagal", Toast.LENGTH_SHORT).show();
         }
     }
 

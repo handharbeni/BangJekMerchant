@@ -6,6 +6,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         xmlns:appx="http://schemas.android.com/tools">
 
         <include
@@ -30,7 +32,7 @@
             app:layout_constraintTop_toBottomOf="@+id/include3">
 
             <android.support.design.widget.TextInputEditText
-                android:maxLength="15"
+                android:maxLength="25"
                 android:id="@+id/txtNamaMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -15,75 +15,75 @@ public class BodyRegisterModel {
 
     @SerializedName("address")
     @Expose
-    public String address;
+    private String address;
 
     @SerializedName("email")
     @Expose
-    public String email;
+    private String email;
 
     @SerializedName("description")
     @Expose
-    public String description;
+    private String description;
 
     @SerializedName("password")
     @Expose
-    public String password;
+    private String password;
 
     @SerializedName("phone")
     @Expose
-    public String phone;
+    private String phone;
 
     @SerializedName("photo")
     @Expose
-    public String photo;
+    private String photo;
 
     @SerializedName("latitude")
     @Expose
-    public String latitude;
+    private String latitude;
 
     @SerializedName("longitude")
     @Expose
-    public String longitude;
+    private String longitude;
 
     @SerializedName("id_merchant_category")
     @Expose
-    public String idMerchantCategory;
+    private String idMerchantCategory;
 
     @SerializedName("max_upload")
     @Expose
-    public String maxUpload;
+    private String maxUpload;
 
     @SerializedName("open_at")
     @Expose
-    public String openAt;
+    private String openAt;
 
     @SerializedName("close_at")
     @Expose
-    public String closeAt;
+    private String closeAt;
 
     @SerializedName("point")
     @Expose
-    public String point;
+    private String point;
 
     @SerializedName("open_status")
     @Expose
-    public String openStatus;
+    private String openStatus;
 
     @SerializedName("status")
     @Expose
-    public String status;
+    private String status;
 
     @SerializedName("deleted")
     @Expose
-    public String deleted;
+    private String deleted;
 
     @SerializedName("imei1")
     @Expose
-    public String imei1;
+    private String imei1;
 
     @SerializedName("imei2")
     @Expose
-    public String imei2;
+    private String imei2;
 
     public String getName() {
         return name;
@@ -227,5 +227,13 @@ public class BodyRegisterModel {
 
     public void setImei2(String imei2) {
         this.imei2 = imei2;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

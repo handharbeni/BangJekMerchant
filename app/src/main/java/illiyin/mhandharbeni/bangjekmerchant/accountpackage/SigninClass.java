@@ -70,10 +70,17 @@ public class SigninClass extends AppCompatActivity implements SessionListener {
                 bl.setEmail(txtUsername.getText().toString());
                 bl.setPassword(txtPassword.getText().toString());
                 String login = adapterModel.doLogin(bl, getString(R.string.caption_login_success), getString(R.string.caption_login_failed));
-                showSnackBar(login);
-                if (getString(R.string.caption_login_success).equalsIgnoreCase(login)){
+                if (login.equalsIgnoreCase(getResources().getString(R.string.caption_login_success))){
+//                    showSnackBar(login);
                     sessionChange();
+                }else{
+                    showSnackBar(login);
                 }
+//                if (getString(R.string.caption_login_success).equalsIgnoreCase(login)){
+//                    sessionChange();
+//                }else{
+//                    showSnackBar(login);
+//                }
             }
         });
     }

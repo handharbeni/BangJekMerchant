@@ -2,6 +2,8 @@ package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.h6ah4i.android.tablayouthelper.TabLayoutHelper;
 
@@ -24,26 +27,23 @@ import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.su
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.sessionlibrary.Session;
+import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 
 /**
  * Created by faizalqurni on 12/19/17.
  */
 
 public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedListener {
-    private RelativeLayout rlHeader;
     private View v;
-    private String imagePath;
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private TabLayoutHelper mTabLayoutHelper;
 
     private Session session;
-    private AdapterModel adapterModel;
-    private NavigationView navigationView;
 
-    private TextView txtNamaMerchant, txtAlamatMerchant, txtDeskripsiMerchant, emailMerchant;
-    private CircleImageView image,imageHeader;
+    private static String TABACTIVE = "TABACTIVE";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,15 +54,21 @@ public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedLis
     @Override
     public void onStart() {
         super.onStart();
+        fetch_module();
         init_view();
+        onResume();
+    }
+    private void fetch_module(){
+        session = new Session(getActivity().getApplicationContext(), new SessionListener() {
+            @Override
+            public void sessionChange() {
+
+            }
+        });
     }
     public void init_view(){
         viewPager = v.findViewById(R.id.pager);
         tabLayout = v.findViewById(R.id.tabLayout);
-
-        txtNamaMerchant = v.findViewById(R.id.txtNamaMerchant);
-        txtAlamatMerchant = v.findViewById(R.id.txtAlamatMerchant);
-        txtDeskripsiMerchant = v.findViewById(R.id.txtDeskripsiMerchant);
 
         viewPager.setAdapter(buildAdapter());
         mTabLayoutHelper = new TabLayoutHelper(tabLayout, viewPager);
@@ -70,8 +76,6 @@ public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedLis
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorTabInActive), getResources().getColor(R.color.colorTabActive));
         tabLayout.addOnTabSelectedListener(this);
-//        rlHeader = v.findViewById(R.id.rlHeader);
-//        rlHeader.setVisibility(View.VISIBLE);
     }
     private PagerAdapter buildAdapter(){
         return new TabsPagerAdapter(getChildFragmentManager());
@@ -94,10 +98,25 @@ public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedLis
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+//        onStart();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FragmentMenu.requestCode){
+            changeTab(1);
+        }else if (requestCode == FragmentProfile.requestCode){
+            changeTab(0);
+        }
+    }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-
+        session.setCustomParams(TABACTIVE, tab.getPosition());
     }
 
     @Override
@@ -108,6 +127,22 @@ public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedLis
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+//        viewPager.setCurrentItem(session.getCustomParams(TABACTIVE, 0), false);
+//        viewPager.setCurrentItem(session.getCustomParams(TABACTIVE, 0));
+        changeTab(session.getCustomParams(TABACTIVE, 0));
+    }
+    private void changeTab(final int position){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TabLayout.Tab tab = tabLayout.getTabAt(position);
+                tab.select();
+            }
+        }, 100);
     }
     private void showSnackBar(String message){
 //        new SnackBar(getApplicationContext()).view(this).message(message).build();

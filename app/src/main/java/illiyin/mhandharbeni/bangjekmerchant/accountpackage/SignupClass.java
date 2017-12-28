@@ -1,13 +1,18 @@
 package illiyin.mhandharbeni.bangjekmerchant.accountpackage;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -77,7 +82,7 @@ public class SignupClass extends AppCompatActivity {
         fetch_data_kategori();
     }
 
-    private void fetch_modules(){
+    private void fetch_modules() {
         session = new Session(this, new SessionListener() {
             @Override
             public void sessionChange() {
@@ -89,7 +94,7 @@ public class SignupClass extends AppCompatActivity {
         crud = new Crud(this, categoryModel);
     }
 
-    private void fetch_components(){
+    private void fetch_components() {
         imgBack = (ImageView) findViewById(R.id.imgBack);
         txtNamaUsaha = (EditText) findViewById(R.id.txtNamaUsaha);
         txtAlamat = (EditText) findViewById(R.id.txtAlamat);
@@ -103,7 +108,8 @@ public class SignupClass extends AppCompatActivity {
         kategori = (MaterialBetterSpinner) findViewById(R.id.txtInputKategori);
         btnRegister = (Button) findViewById(R.id.btnRegister);
     }
-    private void fetch_click(){
+
+    private void fetch_click() {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,7 +141,7 @@ public class SignupClass extends AppCompatActivity {
         txtJamBuka.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
                     showTimePickerDialog(txtJamBuka);
                 }
             }
@@ -149,7 +155,7 @@ public class SignupClass extends AppCompatActivity {
         txtJamTutup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
                     showTimePickerDialog(txtJamTutup);
                 }
             }
@@ -161,6 +167,7 @@ public class SignupClass extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
@@ -178,30 +185,32 @@ public class SignupClass extends AppCompatActivity {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
-
-                Glide.with(this).load(new File(imagePath))
-                        .into(image);
                 try {
                     do_upload();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Toast.makeText(this, "Upload Image Gagal", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
+
     private void do_upload() throws IOException {
         File file = new File(imagePath);
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("userfile", file.getName(), requestFile);
         String returns = adapterModel.uploadRegisterImage(body, getString(R.string.caption_upload_success), getString(R.string.caption_upload_failed));
-        if (returns.equalsIgnoreCase(getString(R.string.caption_upload_success))){
-            String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
+        if (returns.equalsIgnoreCase(getString(R.string.caption_upload_success))) {
+            String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server) + "/uploads/" + file.getName();
             ImageCurrent = locationFile;
             session.setCustomParams(IMAGE_CURRENT, locationFile);
             Glide.with(this).load(locationFile).into(image);
+        } else {
+            Toast.makeText(this, "Upload Image Gagal", Toast.LENGTH_SHORT).show();
         }
     }
-    private BodyRegisterModel prepare_body(){
+
+    private BodyRegisterModel prepare_body() {
         BodyRegisterModel body = new BodyRegisterModel();
         body.setName(txtNamaUsaha.getText().toString());//
         body.setAddress(txtAlamat.getText().toString());
@@ -210,20 +219,29 @@ public class SignupClass extends AppCompatActivity {
         body.setPhone(txtNoTelp.getText().toString());
         body.setPhoto(session.getCustomParams(IMAGE_CURRENT, ImageCurrent));
         body.setIdMerchantCategory(getIdCategoryMerchant(kategori.getText().toString()));//
-        body.setLatitude("123");
-        body.setLongitude("123");
+        body.setMaxUpload("2");
         body.setOpenAt(txtJamBuka.getText().toString());
         body.setCloseAt(txtJamTutup.getText().toString());
+        body.setDescription(txtDeskripsi.getText().toString());
+        body.setPoint("0");
         body.setOpenStatus("OPEN");
-        body.setImei1("123");
+        body.setStatus("123");
+        body.setLatitude("123");
+        body.setLongitude("123");
+        body.setImei1(deviceId());
         body.setImei2("123");
-        body.setStatus("123");//
-//        body.setDeleted("N");
-        body.setMaxUpload("2");//
-        body.setPoint("0");//
 
         return body;
     }
+
+    private String deviceId() {
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return telephonyManager.getDeviceId();
+        }
+        return "null";
+    }
+
     private String getIdCategoryMerchant(String label){
         RealmResults results = crud.read("merchantCategory", label);
         CategoryModel cmm = (CategoryModel) results.get(0);
@@ -252,7 +270,8 @@ public class SignupClass extends AppCompatActivity {
             }
         }
         adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, list);
+                R.layout.item_spinner_with_padding, list);
+        adapter.setDropDownViewResource(R.layout.item_spinner_with_padding);
 
         kategori.setAdapter(adapter);
     }

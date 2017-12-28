@@ -10,39 +10,39 @@ import com.google.gson.annotations.SerializedName;
 public class BodyCreateMenu {
     @SerializedName("key")
     @Expose
-    public String key;
+    private String key;
 
     @SerializedName("merchant_menu")
     @Expose
-    public String merchant_menu;
+    private String merchant_menu;
 
     @SerializedName("id_merchant_menu_category")
     @Expose
-    public String id_merchant_menu_category;
+    private String id_merchant_menu_category;
 
     @SerializedName("photo")
     @Expose
-    public String photo;
+    private String photo;
 
     @SerializedName("price")
     @Expose
-    public String price;
+    private String price;
 
     @SerializedName("discount")
     @Expose
-    public String discount;
+    private String discount;
 
     @SerializedName("discount_variant")
     @Expose
-    public String discount_variant;
+    private String discount_variant;
 
     @SerializedName("description")
     @Expose
-    public String description;
+    private String description;
 
     @SerializedName("status")
     @Expose
-    public String status;
+    private String status;
 
     public BodyCreateMenu(String key, String merchant_menu, String id_merchant_menu_category, String photo, String price, String discount, String discount_variant, String description, String status) {
         this.key = key;

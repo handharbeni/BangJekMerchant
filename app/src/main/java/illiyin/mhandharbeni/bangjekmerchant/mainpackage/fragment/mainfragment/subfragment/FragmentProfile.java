@@ -94,8 +94,6 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
             txtJamBuka.setText(session.getCustomParams(Session.JAM_BUKA, "Not Available"));
             txtJamTutup.setText(session.getCustomParams(Session.JAM_TUTUP, "Not Available"));
             txtDeskripsi.setText(session.getCustomParams(Session.DESKRIPSI, "Not Available"));
-//            txtJamBuka.setText(session.getCustomParams(Session.NAMA, "Not Available"));
-//            txtJamTutup.setText(session.getCustomParams(Session.NAMA, "Not Available"));
 
         }
     }

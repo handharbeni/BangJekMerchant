@@ -183,7 +183,7 @@ public class AdapterModel implements SessionListener{
                                     String notelp = responseLoginModel.getPhone();
                                     String email = responseLoginModel.getEmail();
                                     String token = responseLoginModel.getKey();
-                                    String status = responseLoginModel.getStatus();
+                                    String status = responseLoginModel.getOpenStatus();
                                     String image = responseLoginModel.getPhoto();
                                     String deskripsi = responseLoginModel.getDescription();
                                     String jamBuka = responseLoginModel.getOpenAt();
@@ -340,6 +340,7 @@ public class AdapterModel implements SessionListener{
             /*registrasi gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
 
@@ -355,6 +356,7 @@ public class AdapterModel implements SessionListener{
             /*registrasi gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
 
@@ -370,6 +372,7 @@ public class AdapterModel implements SessionListener{
             /*update gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
     public String deleteMenu(BodyDeleteMenu bodyDeleteMenu, String captionSuccess, String captionFailed) throws IOException {
@@ -384,6 +387,7 @@ public class AdapterModel implements SessionListener{
             /*delete gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
     public String doLogin(BodyLogin bodyLogin, final String captionSuccess, final String captionFailed){
@@ -410,8 +414,8 @@ public class AdapterModel implements SessionListener{
                         String notelp = responseLoginModel.getPhone();
                         String email = responseLoginModel.getEmail();
                         String token = responseLoginModel.getKey();
-                        String status = responseLoginModel.getStatus();
-                        String image = responseLoginModel.getPhone();
+                        String status = responseLoginModel.getOpenStatus();
+                        String image = responseLoginModel.getPhoto();
                         String sha = responseLoginModel.getSha();
                         String deskripsi = responseLoginModel.getDescription();
                         String jamBuka = responseLoginModel.getOpenAt();
@@ -445,6 +449,7 @@ public class AdapterModel implements SessionListener{
             /*upload gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
     public String uploadRegisterImage(MultipartBody.Part userfile, String captionSuccess, String captionFailed) throws IOException {
@@ -459,6 +464,7 @@ public class AdapterModel implements SessionListener{
             /*upload gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
 
@@ -474,6 +480,7 @@ public class AdapterModel implements SessionListener{
             /*update gagal*/
             returns = captionFailed;
         }
+        call.cancel();
         return returns;
     }
     @Override
