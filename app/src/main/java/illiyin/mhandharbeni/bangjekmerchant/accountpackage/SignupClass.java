@@ -1,6 +1,7 @@
 package illiyin.mhandharbeni.bangjekmerchant.accountpackage;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentProfile;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.CategoryModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyRegisterModel;
@@ -41,12 +45,14 @@ import io.realm.RealmResults;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import timber.log.Timber;
 
 /**
  * Created by root on 11/27/17.
  */
 
 public class SignupClass extends AppCompatActivity {
+    public static int PLACE_PICKER_REQUEST = 1;
     private static String IMAGE_CURRENT = "ImageCurrent";
     private String ImageCurrent = "https://pbs.twimg.com/profile_images/658332899335258112/6RSo0UwJ_400x400.jpg";
     private String imagePath;
@@ -62,10 +68,12 @@ public class SignupClass extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
 
     private EditText txtNamaUsaha, txtAlamat, txtEmail, txtPassword, txtNoTelp, txtDeskripsi;
-    private TextView txtJamBuka, txtJamTutup;
-    private Button btnRegister;
+    private TextView txtJamBuka, txtJamTutup, txtPlace;
+    private Button btnRegister, btnPlace;
     private CircleImageView image;
     private Session session;
+    private static String latSignup = "LATITUDESIGNUP", longSignup = "LONGITUDESIGNUP";
+    private static String defLat = "-8.0075251", defLong = "112.62202";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +112,11 @@ public class SignupClass extends AppCompatActivity {
         txtDeskripsi = (EditText) findViewById(R.id.txtDeskripsi);
         txtJamBuka = (TextView) findViewById(R.id.txtJamBuka);
         txtJamTutup = (TextView) findViewById(R.id.txtJamTutup);
+        txtPlace = (TextView) findViewById(R.id.txtPlace);
         image = (CircleImageView) findViewById(R.id.images);
         kategori = (MaterialBetterSpinner) findViewById(R.id.txtInputKategori);
         btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnPlace = (Button) findViewById(R.id.btnPlace);
     }
 
     private void fetch_click() {
@@ -121,7 +131,7 @@ public class SignupClass extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     do_register();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -166,11 +176,31 @@ public class SignupClass extends AppCompatActivity {
                 showTimePickerDialog(txtJamTutup);
             }
         });
+        btnPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    startActivityForResult(builder.build(SignupClass.this), PLACE_PICKER_REQUEST);
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                Double latitude = place.getLatLng().latitude;
+                Double longitude = place.getLatLng().longitude;
+                session.setCustomParams(latSignup, String.valueOf(latitude));
+                session.setCustomParams(longSignup, String.valueOf(longitude));
+                txtPlace.setText(place.getAddress());
+            }
+        }else if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
             //TODO: action
             if (data == null) {
                 //Display an error
@@ -179,7 +209,8 @@ public class SignupClass extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
+            assert selectedImageUri != null;
+            @SuppressLint("Recycle") Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
 
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -187,7 +218,7 @@ public class SignupClass extends AppCompatActivity {
                 imagePath = cursor.getString(columnIndex);
                 try {
                     do_upload();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Upload Image Gagal", Toast.LENGTH_SHORT).show();
                 }
@@ -195,7 +226,7 @@ public class SignupClass extends AppCompatActivity {
         }
     }
 
-    private void do_upload() throws IOException {
+    private void do_upload() throws Exception {
         File file = new File(imagePath);
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("userfile", file.getName(), requestFile);
@@ -226,8 +257,8 @@ public class SignupClass extends AppCompatActivity {
         body.setPoint("0");
         body.setOpenStatus("OPEN");
         body.setStatus("123");
-        body.setLatitude("123");
-        body.setLongitude("123");
+        body.setLatitude(session.getCustomParams(latSignup, defLat));
+        body.setLongitude(session.getCustomParams(longSignup, defLong));
         body.setImei1(deviceId());
         body.setImei2("123");
 
@@ -237,6 +268,7 @@ public class SignupClass extends AppCompatActivity {
     private String deviceId() {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            assert telephonyManager != null;
             return telephonyManager.getDeviceId();
         }
         return "null";
@@ -245,9 +277,10 @@ public class SignupClass extends AppCompatActivity {
     private String getIdCategoryMerchant(String label){
         RealmResults results = crud.read("merchantCategory", label);
         CategoryModel cmm = (CategoryModel) results.get(0);
+        assert cmm != null;
         return cmm.getIdMerchantCategory();
     }
-    private void do_register() throws IOException {
+    private void do_register() throws Exception {
         String returns = adapterModel.doRegister(prepare_body(), getString(R.string.caption_register_success), getString(R.string.caption_register_failed));
         if (returns.equalsIgnoreCase(getString(R.string.caption_register_success))){
             showToast(returns);
@@ -266,6 +299,7 @@ public class SignupClass extends AppCompatActivity {
         if (resultKategori.size() > 0){
             for (int i=0;i<resultKategori.size();i++){
                 CategoryModel cmm = (CategoryModel) resultKategori.get(i);
+                assert cmm != null;
                 list.add(cmm.getMerchantCategory());
             }
         }

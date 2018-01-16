@@ -4,19 +4,19 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
-import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMenuService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.CategoryMerchantService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.MenuMerchantService;
 import illiyin.mhandharbeni.servicemodule.service.intentservice.MerchantInformationService;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import rx.Scheduler;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -24,33 +24,79 @@ import illiyin.mhandharbeni.sessionlibrary.SessionListener;
  */
 
 public class MainService extends Service {
+    private static int PERIODICALLY_CALL = 2 * 1000;
+    private static int DELAY_CALL = 500;
     public static Boolean serviceRunning = false;
-    public static final long NOTIFY_INTERVAL = 2 * 1000;
-    private Handler handler = new Handler();
-    private Timer timer = null;
     private Session session;
-
-    private AdapterModel adapterModel;
 
     @Override
     public void onCreate() {
-//        adapterModel = new AdapterModel(getApplicationContext());
-//        adapterModel.syncCategoryMenuByRx();
-//        adapterModel.syncCategoryMerchantByRx();
-//        adapterModel.syncInfoByRx();
-//        adapterModel.syncMenuByRx();
-
         session = new Session(getApplicationContext(), new SessionListener() {
             @Override
             public void sessionChange() {
 
             }
         });
-        if (timer != null) {
-            timer.cancel();
-        }
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);
+        syncCategoryMenu();
+        syncCategoryMerchant();
+        syncInfoMerchant();
+        syncMenuMerchant();
+    }
+    public void syncCategoryMenu(){
+        Action0 action0 = new Action0() {
+            @Override
+            public void call() {
+                if (!checkIsRunning(CategoryMenuService.class)){
+                    Intent is = new Intent(getBaseContext(), CategoryMenuService.class);
+                    startService(is);
+                }
+            }
+        };
+        Scheduler.Worker worker = Schedulers.newThread().createWorker();
+        worker.schedulePeriodically(action0, DELAY_CALL, PERIODICALLY_CALL, TimeUnit.MILLISECONDS);
+    }
+    private void syncCategoryMerchant(){
+        Action0 action0 = new Action0() {
+            @Override
+            public void call() {
+                if (!checkIsRunning(CategoryMerchantService.class)){
+                    Intent is = new Intent(getBaseContext(), CategoryMerchantService.class);
+                    startService(is);
+                }
+            }
+        };
+        Scheduler.Worker worker = Schedulers.newThread().createWorker();
+        worker.schedulePeriodically(action0, DELAY_CALL, PERIODICALLY_CALL, TimeUnit.MILLISECONDS);
+    }
+    private void syncMenuMerchant(){
+        Action0 action0 = new Action0() {
+            @Override
+            public void call() {
+                if (!checkIsRunning(MenuMerchantService.class)){
+                    if (!session.getToken().equalsIgnoreCase("nothing")){
+                        Intent is = new Intent(getBaseContext(), MenuMerchantService.class);
+                        startService(is);
+                    }
+                }
+            }
+        };
+        Scheduler.Worker worker = Schedulers.newThread().createWorker();
+        worker.schedulePeriodically(action0, DELAY_CALL, PERIODICALLY_CALL, TimeUnit.MILLISECONDS);
+    }
+    private void syncInfoMerchant(){
+        Action0 action0 = new Action0() {
+            @Override
+            public void call() {
+                if (!checkIsRunning(MerchantInformationService.class)){
+                    if (!session.getToken().equalsIgnoreCase("nothing")){
+                        Intent is = new Intent(getBaseContext(), MerchantInformationService.class);
+                        startService(is);
+                    }
+                }
+            }
+        };
+        Scheduler.Worker worker = Schedulers.newThread().createWorker();
+        worker.schedulePeriodically(action0, DELAY_CALL, PERIODICALLY_CALL, TimeUnit.MILLISECONDS);
     }
     @Override
     public IBinder onBind(Intent intent) {
@@ -69,6 +115,7 @@ public class MainService extends Service {
     }
     private boolean checkIsRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        assert manager != null;
         for (ActivityManager.RunningServiceInfo service : manager
                 .getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -76,40 +123,5 @@ public class MainService extends Service {
             }
         }
         return false;
-    }
-
-    class TimeDisplayTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (!checkIsRunning(CategoryMenuService.class)){
-//                        if (!session.getToken().equalsIgnoreCase("nothing")){
-                            Intent is = new Intent(getBaseContext(), CategoryMenuService.class);
-                            startService(is);
-//                        }
-                    }
-                    if (!checkIsRunning(CategoryMerchantService.class)){
-//                        if (!session.getToken().equalsIgnoreCase("nothing")){
-                            Intent is = new Intent(getBaseContext(), CategoryMerchantService.class);
-                            startService(is);
-//                        }
-                    }
-                    if (!checkIsRunning(MenuMerchantService.class)){
-                        if (!session.getToken().equalsIgnoreCase("nothing")){
-                            Intent is = new Intent(getBaseContext(), MenuMerchantService.class);
-                            startService(is);
-                        }
-                    }
-                    if (!checkIsRunning(MerchantInformationService.class)){
-                        if (!session.getToken().equalsIgnoreCase("nothing")){
-                            Intent is = new Intent(getBaseContext(), MerchantInformationService.class);
-                            startService(is);
-                        }
-                    }
-                }
-            });
-        }
     }
 }

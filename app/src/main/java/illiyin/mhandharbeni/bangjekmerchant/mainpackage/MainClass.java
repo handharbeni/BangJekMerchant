@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -31,11 +32,14 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
-import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import illiyin.mhandharbeni.bangjekmerchant.BuildConfig;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.bangjekmerchant.accountpackage.SigninClass;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.FragmentHelp;
@@ -43,7 +47,9 @@ import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.Fr
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentMenu;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment.FragmentProfile;
 import illiyin.mhandharbeni.bangjekmerchant.mainpackage.subactivity.DetailMenu;
+import illiyin.mhandharbeni.bangjekmerchant.mainpackage.utils.CrashReportingTree;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
+import illiyin.mhandharbeni.databasemodule.ProgressRequestBody;
 import illiyin.mhandharbeni.databasemodule.model.MenuMerchantModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.realmlibrary.Crud;
@@ -53,9 +59,13 @@ import illiyin.mhandharbeni.sessionlibrary.SessionListener;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 public class MainClass extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener, SessionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener, SessionListener, ProgressRequestBody.UploadCallbacks {
     private String imagePath;
 
     private Session session;
@@ -80,6 +90,13 @@ public class MainClass extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            Timber.plant(new CrashReportingTree());
+        }
+
         fetch_module();
         fetch_toolbar();
         init_view();
@@ -195,10 +212,14 @@ public class MainClass extends AppCompatActivity
         appBarLayout.setExpanded(expanded);
     }
     private void changeFragment(Fragment fragment, String title){
-        session.setCustomParams(CURRENT_FRAGMENT, title);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.mainFrameLayout, fragment);
-        ft.commit();
+        try {
+            session.setCustomParams(CURRENT_FRAGMENT, title);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrameLayout, fragment);
+            ft.commit();
+        }catch (Exception e){
+            Timber.e(e);
+        }
     }
     private void delete_all_realm(){
         MenuMerchantModel mcm = new MenuMerchantModel();
@@ -243,10 +264,17 @@ public class MainClass extends AppCompatActivity
 
     }
     private void showProgress(){
-        progressDialog = ProgressDialog.show(this, "UPLOAD IMAGE", "UPLOADING", true);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Uploading");
+        progressDialog.show();
     }
     private void hideProgress(){
-        progressDialog.dismiss();
+        if (progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
     }
     private void dialogChangeImage(String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -255,8 +283,8 @@ public class MainClass extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
-                    do_upload();
-                } catch (IOException e) {
+                    progress_upload();
+                } catch (Exception e) {
                     e.printStackTrace();
                     showSnackBar("Upload Image Gagal");
                 }
@@ -266,7 +294,6 @@ public class MainClass extends AppCompatActivity
         builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                hideProgress();
             }
         });
         AlertDialog dialog = builder.create();
@@ -274,19 +301,24 @@ public class MainClass extends AppCompatActivity
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
-            showProgress();
-            //TODO: action
+        if (requestCode == FragmentProfile.PLACE_PICKER_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                Double latitude = place.getLatLng().latitude;
+                Double longitude = place.getLatLng().longitude;
+                do_save("latitude", String.valueOf(latitude));
+                do_save("longitude", String.valueOf(longitude));
+                adapterModel.syncInfoByRx();
+                changeFragment(new FragmentHome(), FRAGMENT_HOME);
+            }
+        }else if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
             if (data == null) {
-                //Display an error
                 return;
             }
             Uri selectedImageUri = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
             assert selectedImageUri != null;
             @SuppressLint("Recycle") Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
-
             if (cursor != null) {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -311,8 +343,8 @@ public class MainClass extends AppCompatActivity
         toggle.setChecked(checked);
         try {
             Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(image);
-        }catch (IllegalStateException | IllegalArgumentException e){
-
+        }catch (Exception e){
+            Timber.e(e);
         }
 
     }
@@ -325,8 +357,8 @@ public class MainClass extends AppCompatActivity
         emailMerchant.setText(email);
         try {
             Glide.with(MainClass.this).load(photo).thumbnail(0.1f).into(imageHeader);
-        }catch (IllegalStateException | IllegalArgumentException e){
-
+        }catch (Exception e){
+            Timber.e(e);
         }
     }
 
@@ -366,27 +398,54 @@ public class MainClass extends AppCompatActivity
             }else{
                 showSnackBar(getString(R.string.caption_update_profile_failed));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Timber.e(e);
         }
 
     }
     private void showSnackBar(String message){
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-    private void do_upload() throws IOException {
-        File file = new File(imagePath);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("userfile", file.getName(), requestFile);
-        MultipartBody.Part key = MultipartBody.Part.createFormData("key", session.getToken());
-        String returns = adapterModel.uploadImage(body, key, getString(R.string.caption_upload_success), getString(R.string.caption_upload_failed));
-        if (returns.equalsIgnoreCase(getString(R.string.caption_upload_success))){
-            String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
-            Glide.with(this).load(locationFile).into(image);
-            do_save("photo", locationFile);
-        }else{
-            showSnackBar("Upload Image Gagal");
-        }
+
+    private void progress_upload() throws Exception {
+        showProgress();
+        final File file = new File(imagePath);
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, this);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("userfile", file.getName(), fileBody);
+        MultipartBody.Part fileKey = MultipartBody.Part.createFormData("key", session.getToken());
+
+        Call call = adapterModel.uploadImages(filePart, fileKey);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                String bodyResponse = response.body().toString();
+                String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
+                Glide.with(MainClass.this).load(locationFile).into(image);
+                do_save("photo", locationFile);
+                progressDialog.setProgress(100);
+                hideProgress();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+    @Override
+    public void onProgressUpdate(int percentage) {
+        progressDialog.setProgress(percentage);
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onFinish() {
+        adapterModel.syncInfoByRx();
+        progressDialog.setProgress(100);
         hideProgress();
     }
 }

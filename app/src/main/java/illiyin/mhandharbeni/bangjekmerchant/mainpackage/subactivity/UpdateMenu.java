@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,6 +38,7 @@ import io.realm.RealmResults;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import timber.log.Timber;
 
 /**
  * Created by faizalqurni on 12/6/17.
@@ -214,8 +214,8 @@ public class UpdateMenu extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
                     do_save();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Timber.e(e);
                 }
             }
         });
@@ -236,8 +236,8 @@ public class UpdateMenu extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
                     do_delete();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Timber.e(e);
                 }
             }
         });
@@ -250,7 +250,7 @@ public class UpdateMenu extends AppCompatActivity {
         dialog.show();
     }
 
-    private void do_save() throws IOException {
+    private void do_save() throws Exception {
         BodyUpdateMenu bodyUpdateMenu = new BodyUpdateMenu();
         bodyUpdateMenu.setId_merchant_menu(id);
         bodyUpdateMenu.setKey(session.getToken());
@@ -279,7 +279,7 @@ public class UpdateMenu extends AppCompatActivity {
         return cmm.getIdMerchantMenuCategory();
     }
 
-    private void do_delete() throws IOException {
+    private void do_delete() throws Exception {
         BodyDeleteMenu bodyDeleteMenu = new BodyDeleteMenu();
         bodyDeleteMenu.setKey(session.getToken());
         bodyDeleteMenu.setId_merchant_menu(id);
@@ -322,8 +322,8 @@ public class UpdateMenu extends AppCompatActivity {
 
                 try {
                     do_upload();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Timber.e(e);
                     Toast.makeText(this, "Upload Image Gagal", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -339,7 +339,7 @@ public class UpdateMenu extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
-    private void do_upload() throws IOException {
+    private void do_upload() throws Exception {
         File file = new File(imagePath);
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("userfile", file.getName(), requestFile);

@@ -39,4 +39,6 @@
     <string name="placeholder_simpan_profile">SIMPAN</string>
     <string name="placeholder_bantuan">Untuk Bantuan atau Masukan\n Kirim Email Ke admin@bangjek.com</string>
     <string name="placeholder_kategori_merchant">Kategori Merchant</string>
+    <string name="placeholder_placemerchant">Lokasi Merchant</string>
+    <string name="placeholder_pilihlokasi">Pilih Lokasi</string>
 </resources>

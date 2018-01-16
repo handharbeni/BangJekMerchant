@@ -21,10 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="31dp"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="31dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginTop="31dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtNamaUsaha"
@@ -44,11 +41,7 @@
             android:layout_marginLeft="@dimen/padding_lr_default"
             android:layout_marginRight="@dimen/padding_lr_default"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutNamaUsaha"
-            tools:layout_editor_absoluteY="226dp">
+            android:layout_marginTop="10dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtAlamat"
@@ -68,11 +61,7 @@
             android:layout_marginLeft="@dimen/padding_lr_default"
             android:layout_marginRight="@dimen/padding_lr_default"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutAlamat"
-            tools:layout_editor_absoluteY="226dp">
+            android:layout_marginTop="10dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtEmail"
@@ -93,11 +82,7 @@
             android:layout_marginLeft="@dimen/padding_lr_default"
             android:layout_marginRight="@dimen/padding_lr_default"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutEmail"
-            tools:layout_editor_absoluteY="226dp">
+            android:layout_marginTop="10dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtNoTelp"
@@ -118,11 +103,7 @@
             android:layout_marginLeft="@dimen/padding_lr_default"
             android:layout_marginRight="@dimen/padding_lr_default"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutNoTelp"
-            tools:layout_editor_absoluteY="226dp">
+            android:layout_marginTop="10dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtDeskripsi"
@@ -133,7 +114,31 @@
                 android:imeOptions="actionNext"
                 android:lines="4" />
         </android.support.design.widget.TextInputLayout>
-
+        <LinearLayout
+            android:gravity="center"
+            android:id="@+id/txtLabelPlace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="31dp"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+            <TextView
+                android:textSize="18sp"
+                android:id="@+id/txtPlace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:ems="10"
+                android:hint="@string/placeholder_placemerchant" />
+            <Button
+                android:id="@+id/btnPlace"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder_pilihlokasi"/>
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/txtLabelJam"
             android:layout_width="match_parent"
@@ -142,11 +147,7 @@
             android:layout_marginStart="31dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:weightSum="2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtInputLayoutDeskripsi">
-
+            android:weightSum="2">
             <TextView
                 android:gravity="center"
                 android:textSize="18sp"
@@ -156,7 +157,6 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/plceholder_jambuka" />
-
             <TextView
                 android:gravity="center"
                 android:textSize="18sp"
@@ -177,10 +177,7 @@
             android:layout_marginStart="31dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:weightSum="2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtLabelJam">
+            android:weightSum="2">
 
             <TextView
                 android:gravity="center"

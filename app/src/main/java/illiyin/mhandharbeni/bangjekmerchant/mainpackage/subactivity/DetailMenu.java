@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -22,12 +23,12 @@ import com.bumptech.glide.Glide;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import illiyin.mhandharbeni.bangjekmerchant.R;
 import illiyin.mhandharbeni.databasemodule.AdapterModel;
+import illiyin.mhandharbeni.databasemodule.ProgressRequestBody;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyCreateMenu;
 import illiyin.mhandharbeni.realmlibrary.Crud;
@@ -37,12 +38,16 @@ import io.realm.RealmResults;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * Created by faizalqurni on 12/6/17.
  */
 
-public class DetailMenu extends AppCompatActivity {
+public class DetailMenu extends AppCompatActivity implements ProgressRequestBody.UploadCallbacks {
     private static String IMAGE_CURRENT = "ImageCurrents";
 
     private AdapterModel adapterModel;
@@ -143,8 +148,8 @@ public class DetailMenu extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
                     do_save();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Timber.e(e);
                 }
             }
         });
@@ -157,7 +162,7 @@ public class DetailMenu extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    private void do_save() throws IOException {
+    private void do_save() throws Exception {
 
         BodyCreateMenu bodyCreateMenu = new BodyCreateMenu();
         bodyCreateMenu.setKey(session.getToken());
@@ -210,17 +215,11 @@ public class DetailMenu extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
-    private void showProgress(){
-        progressDialog = ProgressDialog.show(this, "UPLOAD IMAGE", "UPLOADING", true);
-    }
-    private void hideProgress(){
-        progressDialog.dismiss();
-    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (resultCode == Activity.RESULT_OK && requestCode == 1010) {
-            showProgress();
             //TODO: action
             if (data == null) {
                 //Display an error
@@ -238,16 +237,39 @@ public class DetailMenu extends AppCompatActivity {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 imagePath = cursor.getString(columnIndex);
                 try {
-                    do_upload();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    progress_upload();
+                } catch (Exception e) {
+                    Timber.e(e);
                 }
             }
             hideProgress();
         }
     }
+    private void progress_upload() throws Exception {
+        showProgress();
+        final File file = new File(imagePath);
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, this);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("userfile", file.getName(), fileBody);
+        MultipartBody.Part fileKey = MultipartBody.Part.createFormData("key", session.getToken());
 
-    private void do_upload() throws IOException {
+        Call call = adapterModel.uploadImages(filePart, fileKey);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                String locationFile = getString(illiyin.mhandharbeni.databasemodule.R.string.module_server)+"/uploads/"+file.getName();
+                imageCurrent = locationFile;
+                session.setCustomParams(IMAGE_CURRENT, locationFile);
+                Glide.with(DetailMenu.this).load(locationFile).into(images);
+                onFinish();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+    private void do_upload() throws Exception {
         File file = new File(imagePath);
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("userfile", file.getName(), requestFile);
@@ -259,5 +281,36 @@ public class DetailMenu extends AppCompatActivity {
             session.setCustomParams(IMAGE_CURRENT, locationFile);
             Glide.with(this).load(locationFile).into(images);
         }
+    }
+
+    private void showProgress(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Uploading");
+        progressDialog.show();
+    }
+    private void hideProgress(){
+        if (progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+        progressDialog.setProgress(percentage);
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onFinish() {
+        progressDialog.setProgress(100);
+        hideProgress();
     }
 }

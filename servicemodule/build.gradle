@@ -28,4 +28,7 @@ dependencies {
     implementation project(path: ':databasemodule')
     implementation project(path: ':sessionlibrary')
     implementation 'com.github.quentin7b:android-location-tracker:3.2'
+    implementation 'io.reactivex:rxjava:1.2.4'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+
 }

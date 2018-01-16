@@ -63,12 +63,11 @@ public class Address {
         }
         return valuesm;
     }
-    public String getCurrentAddress(Double latitude, Double longitude){
+    public String getCurrentAddress(Double latitude, Double longitude) throws IOException {
         Geocoder geocoder;
         List<android.location.Address> addresses = null;
         geocoder = new Geocoder(mContext, Locale.getDefault());
         String address = "";
-        try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             address = addresses.get(0).getAddressLine(0)+" "+addresses.get(0).getLocality()+" "+addresses.get(0).getAdminArea(); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
 //            String city = addresses.get(0).getLocality();
@@ -76,9 +75,6 @@ public class Address {
 //            String country = addresses.get(0).getCountryName();
 //            String postalCode = addresses.get(0).getPostalCode();
 //            String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return address;
     }
 }

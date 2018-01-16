@@ -1,5 +1,6 @@
 package illiyin.mhandharbeni.bangjekmerchant.mainpackage.fragment.mainfragment.subfragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.IOException;
 
@@ -18,14 +25,19 @@ import illiyin.mhandharbeni.databasemodule.AdapterModel;
 import illiyin.mhandharbeni.databasemodule.model.user.body.BodyUpdateMerchant;
 import illiyin.mhandharbeni.sessionlibrary.Session;
 import illiyin.mhandharbeni.sessionlibrary.SessionListener;
+import illiyin.mhandharbeni.utilslibrary.Address;
 import illiyin.mhandharbeni.utilslibrary.SnackBar;
 import illiyin.mhandharbeni.utilslibrary.TimePicker;
+import timber.log.Timber;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by root on 12/5/17.
  */
 
 public class FragmentProfile extends Fragment implements View.OnFocusChangeListener {
+    public static int PLACE_PICKER_REQUEST = 1;
 
     public static Integer requestCode = 122;
 
@@ -33,9 +45,9 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
     private Session session;
 
     private AdapterModel adapterModel;
-    private TextView txtNamaUsaha, txtAlamat, txtEmail, txtNoTelp, txtDeskripsi;
+    private TextView txtNamaUsaha, txtAlamat, txtEmail, txtNoTelp, txtDeskripsi, txtPlace;
     private TextView txtJamBuka, txtJamTutup;
-    private Button btnRegister;
+    private Button btnRegister, btnPlace;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,8 +82,10 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
         txtDeskripsi = v.findViewById(R.id.txtDeskripsi);
         txtJamBuka = v.findViewById(R.id.txtJamBuka);
         txtJamTutup = v.findViewById(R.id.txtJamTutup);
+        txtPlace = v.findViewById(R.id.txtPlace);
 
         btnRegister = v.findViewById(R.id.btnRegister);
+        btnPlace = v.findViewById(R.id.btnPlace);
         btnRegister.setText(getString(R.string.placeholder_simpan_profile));
         btnRegister.setVisibility(View.GONE);
     }
@@ -82,10 +96,21 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
 
             }
         });
+        btnPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    getActivity().startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+            }
+        });
     }
 
     private void fetch_info_merchant(){
-        if (!session.getToken().equalsIgnoreCase("nohting")){
+        if (!session.getToken().equalsIgnoreCase("nothing")){
             txtNamaUsaha.setText(session.getCustomParams(Session.NAMA, "Not Available"));
             txtAlamat.setText(session.getCustomParams(Session.ALAMAT, "Not Available"));
             txtEmail.setText(session.getCustomParams(Session.EMAIL, "Not Available"));
@@ -95,6 +120,15 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
             txtJamTutup.setText(session.getCustomParams(Session.JAM_TUTUP, "Not Available"));
             txtDeskripsi.setText(session.getCustomParams(Session.DESKRIPSI, "Not Available"));
 
+            Address address = new Address(getActivity().getApplicationContext());
+            try {
+                String sAddress = address.getCurrentAddress(Double.valueOf(session.getCustomParams(Session.LATITUDE, "0.0")),
+                        Double.valueOf(session.getCustomParams(Session.LONGITUDE, "0.0")));
+                txtPlace.setText(sAddress);
+            } catch (Exception e) {
+                Timber.e(e);
+                txtPlace.setText("Not Available");
+            }
         }
     }
     private void fetch_onchange(){
@@ -167,8 +201,8 @@ public class FragmentProfile extends Fragment implements View.OnFocusChangeListe
             }else{
                 showSnackBar(getString(R.string.caption_update_profile_failed));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Timber.e(e);
         }
 
     }

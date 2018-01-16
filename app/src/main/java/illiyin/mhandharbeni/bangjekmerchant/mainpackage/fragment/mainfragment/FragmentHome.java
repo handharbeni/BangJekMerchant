@@ -33,12 +33,10 @@ import illiyin.mhandharbeni.sessionlibrary.SessionListener;
  * Created by faizalqurni on 12/19/17.
  */
 
-public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedListener {
+public class  FragmentHome extends Fragment implements TabLayout.OnTabSelectedListener {
     private View v;
 
-    private ViewPager viewPager;
     private TabLayout tabLayout;
-    private TabLayoutHelper mTabLayoutHelper;
 
     private Session session;
 
@@ -67,11 +65,11 @@ public class FragmentHome extends Fragment implements TabLayout.OnTabSelectedLis
         });
     }
     public void init_view(){
-        viewPager = v.findViewById(R.id.pager);
+        ViewPager viewPager = v.findViewById(R.id.pager);
         tabLayout = v.findViewById(R.id.tabLayout);
 
         viewPager.setAdapter(buildAdapter());
-        mTabLayoutHelper = new TabLayoutHelper(tabLayout, viewPager);
+        TabLayoutHelper mTabLayoutHelper = new TabLayoutHelper(tabLayout, viewPager);
         mTabLayoutHelper.setAutoAdjustTabModeEnabled(true);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorTabInActive), getResources().getColor(R.color.colorTabActive));

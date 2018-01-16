@@ -22,7 +22,9 @@ public class Session implements EncryptedPreferences.OnSharedPreferenceChangeLis
             SSHA = "SHA",
             DESKRIPSI = "DESKRIPSI",
             JAM_BUKA = "JAM_BUKA",
-            JAM_TUTUP = "JAM_TUTUP";
+            JAM_TUTUP = "JAM_TUTUP",
+            LATITUDE = "LATITUDE",
+            LONGITUDE = "LONGITUDE";
 
     public String STATELOGIN = "STATELOGIN";/*true belum login, false Sudah Login*/
 
@@ -54,26 +56,31 @@ public class Session implements EncryptedPreferences.OnSharedPreferenceChangeLis
         encryptedPreferences.edit()
                 .putString(key, value)
                 .apply();
+        sessionListener.sessionChange();
     }
     public void setCustomParams(String key, Integer value){
         encryptedPreferences.edit()
                 .putInt(key, value)
                 .apply();
+        sessionListener.sessionChange();
     }
     public void setCustomParams(String key, Long value){
         encryptedPreferences.edit()
                 .putLong(key, value)
                 .apply();
+        sessionListener.sessionChange();
     }
     public void setCustomParams(String key, Boolean value){
         encryptedPreferences.edit()
                 .putBoolean(key, value)
                 .apply();
+        sessionListener.sessionChange();
     }
     public void setCustomParams(String key, Float value){
         encryptedPreferences.edit()
                 .putFloat(key, value)
                 .apply();
+        sessionListener.sessionChange();
     }
     public String getCustomParams(String key, String method){
         return encryptedPreferences.getString(key, method);

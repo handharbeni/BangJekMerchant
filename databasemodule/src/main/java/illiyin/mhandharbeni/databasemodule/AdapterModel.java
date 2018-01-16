@@ -2,10 +2,9 @@ package illiyin.mhandharbeni.databasemodule;
 
 import android.content.Context;
 import android.os.StrictMode;
-import android.util.Log;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import illiyin.mhandharbeni.databasemodule.generator.ServiceGenerator;
 import illiyin.mhandharbeni.databasemodule.model.CategoryMenuModel;
@@ -28,9 +27,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observer;
+import rx.Scheduler;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by root on 17/07/17.
@@ -53,11 +52,21 @@ public class AdapterModel implements SessionListener{
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
+    public void testWorker(){
+        Action0 action0 = new Action0() {
+            @Override
+            public void call() {
+                syncCategoryMenuByRx();
+            }
+        };
+        Scheduler.Worker worker = Schedulers.newThread().createWorker();
+        worker.schedulePeriodically(action0, 500, 1000, TimeUnit.MILLISECONDS);
+    }
     public void syncCategoryMenuByRx(){
         interfaceMethod.getCategoryMenuByRx()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(Schedulers.newThread())
-                .unsubscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.trampoline())
                 .subscribe(new Observer<ArrayList<CategoryMenuModel>>() {
                     @Override
                     public void onCompleted() {
@@ -108,9 +117,9 @@ public class AdapterModel implements SessionListener{
     }
     public void syncCategoryMerchantByRx(){
         interfaceMethod.getCategoryMerchantByRx()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(Schedulers.newThread())
-                .unsubscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.trampoline())
                 .subscribe(new Observer<ArrayList<CategoryModel>>() {
                     @Override
                     public void onCompleted() {
@@ -165,9 +174,9 @@ public class AdapterModel implements SessionListener{
     }
     public void syncInfoByRx(){
         interfaceMethod.fetch_info_rx(session.getToken())
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(Schedulers.newThread())
-                .unsubscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.trampoline())
                 .subscribe(new Observer<ArrayList<ResponseLoginModel>>() {
                     @Override
                     public void onNext(ArrayList<ResponseLoginModel> value) {
@@ -188,6 +197,11 @@ public class AdapterModel implements SessionListener{
                                     String deskripsi = responseLoginModel.getDescription();
                                     String jamBuka = responseLoginModel.getOpenAt();
                                     String jamTutup = responseLoginModel.getCloseAt();
+                                    String latitude = responseLoginModel.getLatitude();
+                                    String longitude = responseLoginModel.getLongitude();
+
+                                    session.setCustomParams(Session.LATITUDE, latitude);
+                                    session.setCustomParams(Session.LONGITUDE, longitude);
 
                                     session.setCustomParams(Session.SSHA, sha);
 
@@ -267,9 +281,9 @@ public class AdapterModel implements SessionListener{
     public void syncMenuByRx(){
         if (!session.getToken().equalsIgnoreCase("nothing")) {
             interfaceMethod.getMenuByRx(session.getToken())
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.trampoline())
                     .observeOn(Schedulers.newThread())
-                    .unsubscribeOn(Schedulers.io())
+                    .unsubscribeOn(Schedulers.trampoline())
                     .subscribe(new Observer<ArrayList<MenuMerchantModel>>() {
                         @Override
                         public void onCompleted() {
@@ -328,7 +342,7 @@ public class AdapterModel implements SessionListener{
         }
     }
 
-    public String doRegister(BodyRegisterModel bodyRegisterModel, String captionSuccess, String captionFailed) throws IOException {
+    public String doRegister(BodyRegisterModel bodyRegisterModel, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.register(bodyRegisterModel);
         String response = call.execute().body();
@@ -344,7 +358,7 @@ public class AdapterModel implements SessionListener{
         return returns;
     }
 
-    public String createMenu(BodyCreateMenu bodyCreateMenu, String captionSuccess, String captionFailed) throws IOException {
+    public String createMenu(BodyCreateMenu bodyCreateMenu, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.createMenu(bodyCreateMenu);
         String response = call.execute().body();
@@ -360,7 +374,7 @@ public class AdapterModel implements SessionListener{
         return returns;
     }
 
-    public String updateMenu(BodyUpdateMenu bodyUpdateMenu, String captionSuccess, String captionFailed) throws IOException {
+    public String updateMenu(BodyUpdateMenu bodyUpdateMenu, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.updateMenu(bodyUpdateMenu);
         String response = call.execute().body();
@@ -375,7 +389,7 @@ public class AdapterModel implements SessionListener{
         call.cancel();
         return returns;
     }
-    public String deleteMenu(BodyDeleteMenu bodyDeleteMenu, String captionSuccess, String captionFailed) throws IOException {
+    public String deleteMenu(BodyDeleteMenu bodyDeleteMenu, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.deleteMenu(bodyDeleteMenu);
         String response = call.execute().body();
@@ -437,7 +451,7 @@ public class AdapterModel implements SessionListener{
         return returns[0];
     }
 
-    public String uploadImage(MultipartBody.Part userfile, MultipartBody.Part key, String captionSuccess, String captionFailed) throws IOException {
+    public String uploadImage(MultipartBody.Part userfile, MultipartBody.Part key, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.uploadImage(userfile, key);
         String response = call.execute().body();
@@ -452,7 +466,10 @@ public class AdapterModel implements SessionListener{
         call.cancel();
         return returns;
     }
-    public String uploadRegisterImage(MultipartBody.Part userfile, String captionSuccess, String captionFailed) throws IOException {
+    public Call uploadImages(MultipartBody.Part userfile, MultipartBody.Part key) throws Exception {
+        return interfaceMethod.uploadImage(userfile, key);
+    }
+    public String uploadRegisterImage(MultipartBody.Part userfile, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.uploadRegisterImage(userfile);
         String response = call.execute().body();
@@ -468,7 +485,7 @@ public class AdapterModel implements SessionListener{
         return returns;
     }
 
-    public String updateMerchant(BodyUpdateMerchant bodyUpdateMerchant, String captionSuccess, String captionFailed) throws IOException {
+    public String updateMerchant(BodyUpdateMerchant bodyUpdateMerchant, String captionSuccess, String captionFailed) throws Exception {
         String returns = captionFailed;
         Call<String> call = interfaceMethod.updateMerchant(bodyUpdateMerchant);
         String response = call.execute().body();
